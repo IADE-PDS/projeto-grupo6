@@ -181,9 +181,14 @@ Convidaram-me para experimentar e desde aí tenho jogado bastante.”
 ```
 ## Guiões
 
-### Iniciar um jogo
-O jogador quando quiser começar um jogo, carrega no botão da pagina inicial a dizer 
+### 1º Cenário: Entrar num lobby
+O jogador quando abre a aplicação MiniGamerino, depara-se com um menu principal com um botão a dizer “Play”, após carregar nesse botão terá que escolher “Join Game”, aí encontrará uma lista de lobbies disponíveis, e simplesmente seleciona um que queira entrar e estará pronto para começar a jogar. O jogador, se quiser entrar num lobby privado, em baixo à esquerda, terá uma opção para meter o código do lobby que será oferecido pelo outro jogador.
 
+### 2º Cenário: Criar conta
+O jogador ao entrar pela primeira vez no MiniGamerino, terá que  registar-se com o email, nickname , palavra-passe, após preencher será-lhe enviado um mail de confirmação para confirmar a conta.
+
+### 3º Cenário: Criar um lobby
+O criador do lobby terá que preencher as informações do mesmo como nome, limitar o número de jogadores, privar ou não o lobby, se o privar será lhe disponibilizado um código para dar aos outros jogadores. Após o preenchimento poderá criar o lobby.
  
 ## Requisitos Funcionais e Não Funcionais
 ### Requisitos Funcionais
@@ -195,7 +200,9 @@ O jogador quando quiser começar um jogo, carrega no botão da pagina inicial a 
 
 ### Requisitos Não Funcionais
 - Sistema estará apenas disponível para a plataforma Android.
-- O desenvolvimento do sistema será em C#, JavaScript.
-- O sistema deve ter garantida disponibilidade 95%.
+- Conexão com Arduino
+- Personagens do mini-jogo "Luta dos Palitos" com rig em vez de sprites
 
 ## Modelo do Domínio
+
+## Plano de Produção
