@@ -206,3 +206,26 @@ O criador do lobby terá que preencher as informações do mesmo como nome, limi
 ## Modelo do Domínio
 
 ## Plano de Produção
+
+```mermaid
+gantt
+title       Gráfico de Gantt do Mini Gamerino
+
+
+Primeira Entrega :milestone,    des1, 2023-10-12 ,2023-10-12 
+
+section Segunda Entrega
+Desenvolvimento da BD e Servidores       :crit, active,  des2, 2023-10-12 , 21d
+Primeiro Minijogo       :crit, active,  des2, 2023-10-12 , 21d
+Configuração do Unity Matchmaking  :         crit, des3, after des2, 10d
+
+section Terceira Entrega
+Segunda Entrega :milestone,    des1, 2023-11-12 ,2023-11-12 
+Configuração e Confecção do Arduino   :         des4, after des3, 21d
+Restante dos Minijogos   :         crit, des5, after des2, 45d
+Disponibilidades Extras   :         des6, after des4, 14d
+Terceira Entrega :milestone,    des1, 2024-01-07 ,2024-01-07 
+
+section Documentação
+Escritura da Documentação :active,    des5, 2023-10-10 ,2024-01-07
+```
