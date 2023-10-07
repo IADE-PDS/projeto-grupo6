@@ -1,5 +1,6 @@
 ![Iade Logo](https://cdn.cookielaw.org/logos/742d2478-744c-44aa-96e4-ed4786a59650/9b0acaac-8639-48a5-97db-1e737c19e441/81111750-f216-451a-94a3-b9f524d4522a/IADE_Logotipo.jpg)
 
+
 # Projeto Desenvolvimento Software
 ### Docente André Sabino
 
@@ -104,7 +105,6 @@ Nos vamos adaptar este stilo por ser bem simples.
 ## Arquitetura da Solução
 
 
-
 ---
 ## Personas
 <img src="https://cdn.discordapp.com/attachments/1134884450891731086/1155956836630003882/image.png" width="200" height="200" />
@@ -192,16 +192,26 @@ O criador do lobby terá que preencher as informações do mesmo como nome, limi
  
 ## Requisitos Funcionais e Não Funcionais
 ### Requisitos Funcionais
+**RF** - Requesito Funcional
 
-- Sistema de Registo e Login.
-- Conseguir conectar com outros jogadores. 
-- Sistema de pontos funcional.
-- Sistema de matchmaking.
+**RNF** - Requesito Não Funcional
+| **ID** |           **Descrição**          | **Categoria** |
+|:------:|:--------------------------------:|:-------------:|
+| RF1    | Sistema de Registo e Login       | Must Have     |
+| RF2    | Multiplayer implementado         | Must Have     |
+| RF3    | Sistema de Pontos                | Must Have     |
+| RF4    | Sistema em app android           | Must Have     |
+| RF5    | 2 minijogos                     | Must Have     |
+| RF6    | Sistema de Matchmaking           | Should Have   |
+| RF7    | Nivel Global do Player           | Should Have   |
+|        |                                   |                |
+|        |                                  |               |
+| RNF1   | Tolerancia a faltas              | Must Have     |
+| RNF2   | Base de Dados em MongoDB         | Must Have     |
+| RNF3   | Api REST/Websockets              | Must Have     |
+| RNF4   | Conexão com arduino              | Nice to Have  |
+| RNF5   | Stickman em rig em vez de sprite | Nice to Have  |
 
-### Requisitos Não Funcionais
-- Sistema estará apenas disponível para a plataforma Android.
-- Conexão com Arduino
-- Personagens do mini-jogo "Luta dos Palitos" com rig em vez de sprites
 
 ## Modelo do Domínio
 
