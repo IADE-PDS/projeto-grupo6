@@ -103,7 +103,7 @@ Nos vamos adaptar este stilo por ser bem simples.
 
 ![stickmanfight](https://cdn.akamai.steamstatic.com/steam/apps/674940/capsule_616x353.jpg?t=1667202217)
 ## Arquitetura da Solução
-
+<img src="https://media.discordapp.net/attachments/1134884450891731086/1160235634561126420/image.png?ex=6533eca3&is=652177a3&hm=b273269235c86814d275ef28daf906d7fbf93c6d781cf97cd3a9d81408b5194b&=" width="500" height="500" />
 
 ---
 ## Personas
