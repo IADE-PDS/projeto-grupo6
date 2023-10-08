@@ -215,6 +215,9 @@ O criador do lobby terá que preencher as informações do mesmo como nome, limi
 
 ## Modelo do Domínio
 
+
+<img src="https://cdn.discordapp.com/attachments/1151160969209327646/1160250472314191882/image.png?ex=6533fa75&is=65218575&hm=937df074944a16c4a86a650591838a8ee31727373b2f86403e595898ebd2e535&" width="700" height="400" />
+
 ## Plano de Produção
 
 ```mermaid
