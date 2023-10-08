@@ -192,9 +192,9 @@ O criador do lobby terá que preencher as informações do mesmo como nome, limi
  
 ## Requisitos Funcionais e Não Funcionais
 ### Requisitos Funcionais
-**RF** - Requesito Funcional
+**RF** - Requisito Funcional
 
-**RNF** - Requesito Não Funcional
+**RNF** - Requisito Não Funcional
 | **ID** |           **Descrição**          | **Categoria** |
 |:------:|:--------------------------------:|:-------------:|
 | RF1    | Sistema de Registo e Login       | Must Have     |
