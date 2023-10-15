@@ -209,7 +209,7 @@ O criador do lobby terá que preencher as informações do mesmo como nome, limi
 | RNF1   | Tolerancia a faltas              | Must Have     |
 | RNF2   | Base de Dados em MongoDB         | Must Have     |
 | RNF3   | Api REST/Websockets              | Must Have     |
-| RNF4   | Conexão com arduino              | Nice to Have  |
+| RNF4   | Conexão com arduino              |Should Have  |
 | RNF5   | Stickman em rig em vez de sprite | Nice to Have  |
 
 
