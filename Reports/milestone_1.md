@@ -145,8 +145,8 @@ Localização: Aveiro, Portugal
 
 #### Interesses
 - Piano ⇒ Toca para um orquestra
-- Bares ⇒ Todas as sextas á noite gosta de ir ao bar e beber umas quantas servejas com os amigos e divertir-se
-- Viajar ⇒ tem um espirito aventoreiro e já viajou mais de QUINZE paises
+- Bares ⇒ Todas as sextas á noite gosta de ir ao bar e beber umas quantas cervejas com os amigos e divertir-se
+- Viajar ⇒ tem um espirito aventureiro e já viajou mais de QUINZE países
 
 #### Qual a razão de jogar MiniGamerino?
 
