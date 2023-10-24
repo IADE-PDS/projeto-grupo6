@@ -4,6 +4,7 @@ const db = require("../config/database");
 const client = db.getdatabase();
 const saltRounds = 10; 
 
+
 class User {
     constructor(id, name, pass, token) {
         this.id = id;
