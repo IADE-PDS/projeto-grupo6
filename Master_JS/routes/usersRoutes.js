@@ -9,8 +9,9 @@ const tokenSize = 64;
 
 router.post('', async function (req, res, next) {
     try {
-       let result = await User.Register(req.body.user);
-       res.status(result.status).send(result.result.msg);
+        //! save a token on register so user doesnt have to login
+        let result = await User.Register(req.body.user);
+        res.status(result.status).send(result.result.msg);
     } catch (err) {
         console.log(err);
         res.status(500).send("Internal server error");
