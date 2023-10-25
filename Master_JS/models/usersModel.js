@@ -25,9 +25,6 @@ class User {
     static async Register(user) {
         try {
             let db = client.collection("user")
-            //* creating the other tables
-            //*tabela de stats
-            //* tabela de items
             //missing email verification
             if(!user.username || !user.email || !user.password)
                 return {status: 422,result: {
@@ -49,17 +46,10 @@ class User {
             insert_user.username = user.username;
             insert_user.password = encpass;
             insert_user.email = user.email;
+            insert_user.inventory = [];
+            insert_user.stats = [];//! logica de minigame nas stats 
             dbResult = await db.insertOne(insert_user);
             let user_id = dbResult.insertedId;
-            console.log(user_id);
-
-            db = client.collection("player_stats");
-            //get from dbResult player id
-            //insert a player stats basic format
-            db = client.collection("player_items");
-            let items = {"player_id":user_id,
-                            "items":[]};
-            dbResult = await db.insertOne(items);
             return {status: 200, result: {
                 msg:"User Registered"
             }}
