@@ -27,11 +27,11 @@ class User {
             //missing email verification
             if(!user.username || !user.email || !user.password)
                 return {status: 422,result: {
-                    msg:"Email and password required"
+                    msg:"Bad Data"
                 }}
             if(!isValidEmail(user.email)){
                 return {status: 422,result: {
-                    msg:"Email and password required"
+                    msg:"Bad Data"
                 }}
             }
             let dbResult = await client.find({ email: user.email}).toArray();
@@ -59,11 +59,11 @@ class User {
             //missing TFA
             if(!user.email || !user.password)
                 return {status: 422,result: {
-                    msg:"Email and password required"
+                    msg:"Bad Data"
                 }}
             if(!isValidEmail(user.email)){
                 return {status: 422,result: {
-                    msg:"Email and password required"
+                    msg:"Bad Data"
                 }}
             }
             let dbResult = await client.find({ email: user.email}).toArray();
