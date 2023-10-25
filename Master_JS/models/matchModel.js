@@ -1,10 +1,42 @@
 class Match{
-    constructor(game){
-        this.game = game;
-    };
-    
 /*
+user{
+
+    inventory:[]
+    stats:{
+        game:[
+            stickfight:{
+
+            },russian_roulette{
+
+            },prop_hunt{
+
+            },maze{
+
+            },lightning_round{
+
+            },rope{
+
+            },shooting{
+
+            },race{
+
+            },quiz{
+
+            },gartic{
+
+            }
+            
+        ]}
+}
 qd inicia:
+{   
+
+}
+
+
+
+
 match = {
     server_unity_id:
     player: [
@@ -56,19 +88,6 @@ jogo = {
 }
 
 */
-
-    static async insertMatch(game) {
-        try {
-            //inserir na base de dados historico, o game diretamente, como vem do server unity nao precisa de verificação de inputs
-            //converte a informação para fazer update nos stats globais de cada player            
-        } catch (err) {
-            console.log(err);
-            return { status: 500, result: err };
-        }  
-    }
- 
-
-
 };
 module.exports = Match;
 

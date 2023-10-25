@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const auth = require("../config/utils");
 const db = require("../config/database");
-const client = db.getdatabase().collection("User");
+const client = db.getdatabase();
 const saltRounds = 10; 
 
 function isValidEmail(email) {
@@ -24,6 +24,10 @@ class User {
 
     static async Register(user) {
         try {
+            let db = client.collection("user")
+            //* creating the other tables
+            //*tabela de stats
+            //* tabela de items
             //missing email verification
             if(!user.username || !user.email || !user.password)
                 return {status: 422,result: {
@@ -34,7 +38,7 @@ class User {
                     msg:"Bad Data"
                 }}
             }
-            let dbResult = await client.find({ email: user.email}).toArray();
+            let dbResult = await db.find({ email: user.email}).toArray();
             if(dbResult.length){
                 return {status: 400, result: {
                     msg:"That email is already registered"
@@ -45,7 +49,17 @@ class User {
             insert_user.username = user.username;
             insert_user.password = encpass;
             insert_user.email = user.email;
-            dbResult = await client.insertOne(insert_user);
+            dbResult = await db.insertOne(insert_user);
+            let user_id = dbResult.insertedId;
+            console.log(user_id);
+
+            db = client.collection("player_stats");
+            //get from dbResult player id
+            //insert a player stats basic format
+            db = client.collection("player_items");
+            let items = {"player_id":user_id,
+                            "items":[]};
+            dbResult = await db.insertOne(items);
             return {status: 200, result: {
                 msg:"User Registered"
             }}
@@ -56,6 +70,7 @@ class User {
     }
     static async Login(user){
         try {
+            let db = client.collection("user");
             //missing TFA
             if(!user.email || !user.password)
                 return {status: 422,result: {
@@ -66,7 +81,7 @@ class User {
                     msg:"Bad Data"
                 }}
             }
-            let dbResult = await client.find({ email: user.email}).toArray();
+            let dbResult = await db.find({ email: user.email}).toArray();
             if(!dbResult.length)
                 return {status: 401, result: {
                     msg:"Email or password incorrect"
@@ -91,10 +106,12 @@ class User {
     }
     static async SaveToken(user){
         try{
-            let query = {email : user.email}
+            console.log("saving token");
+            let db = client.collection("user");
+            let query = {email : user.email};
             let new_value = {$set:{token : user.token}}
-            let dbResult = await client.updateOne(query, new_value);
-            return { status: 200, result: {msg:"Token saved!"}} ;
+            let dbResult = await db.updateOne(query, new_value);
+            return { status: 200, result: {msg:"Token saved!"}};
         }catch(err){
             console.log(err);
             return{status: 500, result: { msg: "Internal server error" }}
