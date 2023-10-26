@@ -45,7 +45,6 @@ class UnityServer {
                 .find({isPrivate: false,
                        isOfficial: false,
                        status: "waiting"})
-                .sort({server_name: 1})
                 .toArray()
                 console.log(results);
             for (let result of results) {
