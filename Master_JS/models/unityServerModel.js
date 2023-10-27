@@ -65,7 +65,7 @@ class UnityServer {
         games_pool, match_id, port, child) {
         try {
             let db = client.collection("unity")
-            //missing email verification
+            //missing crucial information verification
             if(!game_name || !match_id || !port || !child)
                 return {status: 422,result: {
                     msg:"Bad Data"
@@ -79,7 +79,7 @@ class UnityServer {
                     msg:"this name already exists"
                 }}
             };
-                 
+
             let insert_unityserver = new UnityServer();
             insert_unityserver.isPrivate = false;
             insert_unityserver.max_players = max_players;
