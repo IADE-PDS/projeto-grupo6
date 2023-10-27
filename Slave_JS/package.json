@@ -1,0 +1,26 @@
+{
+  "name": "game_template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mmfb/game_template.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mmfb/game_template/issues"
+  },
+  "homepage": "https://github.com/mmfb/game_template#readme",
+  "dependencies": {
+    "dockerode": "^4.0.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-validator": "^6.14.3"
+  }
+}
