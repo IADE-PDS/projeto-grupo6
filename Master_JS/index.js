@@ -21,6 +21,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 const usersRouter = require("./routes/usersRoutes");
 app.use("/api/users",usersRouter);
 
+const childRouter = require("./routes/childRoutes");
+app.use("/api/child",childRouter);
 
 
 app.use((req, res, next) => {

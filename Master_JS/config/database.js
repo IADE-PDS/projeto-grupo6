@@ -6,6 +6,8 @@ const poolSize = 10;
 const client = new MongoClient(uri, {
   maxPoolSize: poolSize 
 });
+
+
 const init = async () => {
   try {
     await client.connect();
@@ -14,9 +16,24 @@ const init = async () => {
     console.log(error);
   }
 };
+
+
 const getdatabase = () => {
   let database = client.db(process.env.DATABASE_NAME)
   return database;
 };
-module.exports.init = init;
-module.exports.getdatabase = getdatabase;
+
+
+const close = async () => {
+  try {
+    await client.close();
+    console.log("Connection closed");
+  } catch (error) {
+    console.log(error);
+  }
+};
+module.exports = {
+  init,
+  getdatabase,
+  close,
+};

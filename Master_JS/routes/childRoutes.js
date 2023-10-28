@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const User = require("../models/usersModel");
+const Child = require("../models/childModel");
 const utils = require("../config/utils");
 const auth = require("../middleware/auth");
 const tokenSize = 64;
@@ -9,8 +9,22 @@ const tokenSize = 64;
 //register the slave in the database
 router.post('/register', async function (req, res, next) {
     try {
+        //req recieves the ip of the owner + a secret key and call function on childModel that will insert the slave to the db
+        let result = await Child.RegisterChild(req.body);
+        res.status(result.status).send({msg: result.result.msg});
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Internal server error");
+    }
+});
+
+router.delete('/register', async function (req, res, next) {
+    try {
+        console.log("attemptd!!!");
+        console.log(req.body)
         //req recieves the ip of the owner + a secret key
         //call function on childModel that will insert the slave to the db
+        res.status(200).send({msg: "Recieved"});
     } catch (err) {
         console.log(err);
         res.status(500).send("Internal server error");
