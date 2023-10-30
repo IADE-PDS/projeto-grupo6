@@ -20,6 +20,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const usersRouter = require("./routes/usersRoutes");
 app.use("/api/users",usersRouter);
+const unityServerRouter = require("./routes/unityServerRoutes");
+app.use("/api/unityServer",unityServerRouter);
 
 
 
