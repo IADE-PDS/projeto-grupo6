@@ -11,13 +11,13 @@ class Child {
 
     static async RegisterChild(child) {
         try {
-            if(child.pass != password)
+            if(child.pass != password || !child.pass)
                 return {status: 401, result: {msg:"Not a valid server"}}
-            
+            let insert_child = new Child();
+            insert_child.ip = child.ip;
+            insert_child.n_unityServers = 0;
             let db = client.collection("child");
-            
-            //recieve ping, master password
-            //verify is pass is correct
+            let dbResult = await db.insertOne(insert_child);
             //register slave
             return{status: 200, result: {msg:"Registered sucsessfully"}}
         } catch (err) {
