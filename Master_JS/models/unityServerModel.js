@@ -10,14 +10,43 @@ function dbLobbiestoLobby(dbr)  {
         dbr.isPrivate, dbr.game_name, dbr.isOfficial, dbr.port, dbr.child, dbr.status);
 }
 
+class Match{
+    //players = [id_player_1, id_player2, ...] 
+    //or
+    //players = [] e depois faz se push do id do player
+    constructor(  server_unity_id, players, games, log, max_players, games_pool,
+        isPrivate, game_name,isOfficial, port, child, status){
+        this.server_unity_id = server_unity_id;
+        this.players = players;
+        this.games = games;
+        this.log = log;
+        this.settings= {
+            max_players: max_players,
+            games_pool: games_pool,
+            isPrivate: isPrivate,
+            game_name: game_name,
+            isOfficial: isOfficial,
+            port: port,
+            child: child,
+            status: status,
+        };
+    }
+}
+
 
 class UnityServer {
-    constructor(match_id, max_players, games_pool, isPrivate, game_name,
-        isOfficial, port, child, status) {
+    constructor(match_id, max_players, server_unity_id, games_pool,jogos,
+        player, log, isPrivate, game_name,isOfficial, port, child, status) {
         this.match_id= match_id;
         this.max_players = max_players;
         this.games_pool = games_pool;
         this.isPrivate = isPrivate;
+        this.settings= {
+            server_unity_id: server_unity_id,
+            player: player,
+            jogos: jogos,
+            log: log
+        };
         this.game_name = game_name;
         this.isOfficial = isOfficial;
         this.port = port;
