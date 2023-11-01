@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Child = require("../models/childModel");
+const Slave = require("../models/slaveModel");
 const utils = require("../config/utils");
 const auth = require("../middleware/auth");
 const tokenSize = 64;
@@ -10,7 +10,7 @@ const tokenSize = 64;
 router.post('/register', async function (req, res, next) {
     try {
         //req recieves the ip of the owner + a secret key and call function on childModel that will insert the slave to the db
-        let result = await Child.RegisterChild(req.body);
+        let result = await Slave.RegisterChild(req.body);
         res.status(result.status).send({msg: result.result.msg});
     } catch (err) {
         console.log(err);
@@ -46,7 +46,7 @@ router.post('', async function (req, res, next) {
     }
 });
 //Update the game server
-router.post('', async function (req, res, next) {
+router.patch('', async function (req, res, next) {
     try {
         //! verify if the server password is correct
         //get updated information from a unity server

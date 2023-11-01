@@ -3,7 +3,7 @@ const db = require("../config/database");
 const client = db.getdatabase();
 const password = process.env.REGISTATION_PASSWORD 
 
-class Child {
+class Slave {
     constructor(ip, n_unityServers){
         this.ip = ip;
         this.n_unityServers = n_unityServers;
@@ -36,4 +36,4 @@ class Child {
     }
 }
 
-module.exports = Child;
+module.exports = Slave;
