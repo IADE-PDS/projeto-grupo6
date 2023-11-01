@@ -1,17 +1,10 @@
 require('dotenv').config();
 var express = require('express');
 var path = require('path');
-var cookieSession = require('cookie-session');
 var morgan = require('morgan');
 const db = require("./config/database");
 
 var app = express();
-
-app.use(cookieSession({
-  name: 'session',
-  secret: "process.env.COOKIE_SECRET",
-  maxAge: 6 * 60 * 60 * 1000 // 6 hours
-}));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -23,6 +16,8 @@ app.use("/api/users",usersRouter);
 const unityServerRouter = require("./routes/unityServerRoutes");
 app.use("/api/unityServer",unityServerRouter);
 
+const slaveRouter = require("./routes/slaveRoutes");
+app.use("/api/slave",slaveRouter);
 
 
 app.use((req, res, next) => {

@@ -1,13 +1,6 @@
-const bcrypt = require('bcrypt');
 const auth = require("../config/utils");
-const db = require("../config/database");
-const client = db.getdatabase();
 const saltRounds = 10; 
 
-function isValidEmail(email) {
-    const emailRegex = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
-}
 
 class User {
     constructor(username, password,email , token) {
