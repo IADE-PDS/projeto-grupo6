@@ -5,15 +5,13 @@ const db = require("../config/database");
 const client = db.getdatabase();
 
 
-function dbLobbiestoLobby(dbr)  {
-    return new UnityServer(dbr.match_id, dbr.max_players, dbr.games_pool,
-        dbr.isPrivate, dbr.game_name, dbr.isOfficial, dbr.port, dbr.child, dbr.status);
-}
+
 function dbMatchtoMatch(dbr)  {
-    return new Match(dbr.server_unity_id, dbr.players, dbr.games, dbr.log, dbr.max_players,
-        dbr.games_pool ,dbr.isPrivate, dbr.game_name, dbr.isOfficial, dbr.port,
-        dbr.child, dbr.status);
+    return new Match(dbr.server_unity_id, dbr.players, dbr.games, dbr.log, dbr.settings.max_players,
+        dbr.settings.games_pool ,dbr.settings.isPrivate, dbr.settings.game_name, dbr.settings.isOfficial, dbr.settings.port,
+        dbr.settings.child, dbr.settings.status);
 }
+
 class Match{
     constructor(  server_unity_id, players, games, log, max_players, games_pool,
         isPrivate, game_name,isOfficial, port, child, status){
@@ -39,6 +37,14 @@ class Match{
         match.games = this.games;
         match.log = this.log;
         match.settings = this.settings;   
+        match.settings.max_players= this.settings.max_players
+        match.settings.games_pools= this.settings.games_pools
+        match.settings.isPrivate = this.settings.isPrivate
+        match.settings.game_name = this.settings.game_name
+        match.settings.isOfficials = this.settings.isOfficials
+        match.settings.port = this.settings.port
+        match.settings.child = this.settings.child
+        match.settings.status = this.settings.status
         return match; 
     }
 
@@ -49,12 +55,14 @@ class Match{
                 .find({"settings.isPrivate": false,
                        "settings.isOfficial": false,
                        "settings.status": "waiting"})
-                .toArray()
-                console.log(results);
+                .toArray();
+            console.log(results);   
             for (let result of results) {
                 matches.push(dbMatchtoMatch(result));
             }
-
+            console.log("result");
+            console.log(matches);
+            
             return { status: 200, result: matches}
         } catch (err) {
             console.log(err);
@@ -110,7 +118,7 @@ class Match{
 
 }
 
-module.exports = UnityServer;
+module.exports = Match;
 
 /* 
 class UnityServer {
