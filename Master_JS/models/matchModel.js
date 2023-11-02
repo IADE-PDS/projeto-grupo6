@@ -1,9 +1,8 @@
-
 const bcrypt = require('bcrypt');
 const auth = require("../config/utils");
 const db = require("../config/database");
 const client = db.getdatabase();
-
+const Slave = require("./slaveModel");
 
 
 function dbMatchtoMatch(dbr)  {
@@ -26,7 +25,7 @@ class Match{
             game_name: game_name,
             isOfficial: isOfficial,
             port: port,
-            child: child,
+            ip:ip,
             status: status,
         };
     };
@@ -52,46 +51,28 @@ class Match{
             return { status: 500, result: err };
         }  
     }
-
-
-
-    static async CreateUnityServerPublic( max_players, game_name,
-        games_pool, match_id, port, child) {
+    static async CreateUnityServerPublic(settings) {
         try {
-            let db = client.collection("unity")
-            //missing crucial information verification
-            if(!game_name || !match_id || !port || !child)
-                return {status: 422,result: {
-                    msg:"Bad Data"
-                }}
-            if(!games_pool || games_pool==[] ){ games_pool="all"}
-            if(max_players<=0){max_players=4}
+            let db = client.collection("match")
+            //! Verify if every settings exist and ar set correctly
+            //if no name then cant create
+            let result = Slave.CreateServer(settings);
+            //if server created successfully
+            // add to settings, the port and additional information ex:
+            settings.status = "waiting";
             
-            let dbResult = await db.find({ game_name: game_name}).toArray();
-            if(dbResult.length){
-                return {status: 400, result: {
-                    msg:"this name already exists"
-                }}
-            };
-            
-            let insert_match = new Match();
-            insert_match.server_unity_id = null;
+            //insert into database
+            let insert_match = {};
             insert_match.players = [];
             insert_match.games = [];
             insert_match.log = [];
-            insert_match.max_players = max_players;
-            insert_match.game_name = game_name;
-            insert_match.games_pool = games_pool;
-            insert_match.isOfficial = false;
-            insert_match.match_id = match_id;
-            insert_match.match_id = port;
-            insert_match.child = child;
-            insert_match.status = "waiting";
-
-            dbResult = await db.insertOne(insert_match);
-            let match_id = dbResult.insertedId;
+            insert_match.settings = settings;
+            let dbResult = await db.insertOne(insert_match);
+            //return status 200 and the ip with the port from the server
+            //the unity app recieves the status 200 and enters on the server with the ip and port
             return {status: 200, result: {
-                msg:"unity server created sucessfully"
+                msg:"unity server created sucessfully",
+                ip:settings.ip+":"+settings.port
             }}
         } catch (err) {
             console.log(err);
