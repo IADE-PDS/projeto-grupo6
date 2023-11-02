@@ -44,7 +44,8 @@ class Match{
                 match.name = result.settings.game_name;
                 match.n_players = result.players.length;
                 match.max = result.settings.max_players;
-                matches.pugh(match);
+                match.pin = result.settings.pin;
+                matches.push(match);
             }
             console.log("result");
             console.log(matches);
