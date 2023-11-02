@@ -36,8 +36,9 @@ class Marchmaking {
     }
     static async SearchServer() {
         try {
+            //search on db for servers with the server.settings.isOfficial = true;
             //if there are none
-            this.CreateServer();
+            let result = this.CreateServer();
             //if there are choose one and 
             
             this.ConnectServer();

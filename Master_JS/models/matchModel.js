@@ -12,9 +12,8 @@ function dbMatchtoMatch(dbr)  {
 }
 
 class Match{
-    constructor(  server_unity_id, players, games, log, max_players, games_pool,
-        isPrivate, game_name,isOfficial, port, child, status){
-        this.server_unity_id = server_unity_id;
+    constructor( players, games, log, max_players, games_pool,
+        isPrivate, game_name,isOfficial, port, ip, status){
         this.players = players;
         this.games = games;
         this.log = log;
@@ -39,8 +38,13 @@ class Match{
                        "settings.status": "waiting"})
                 .toArray();
             console.log(results);   
+            //only send the name, and the numbers of players, and maxplayer
             for (let result of results) {
-                matches.push(dbMatchtoMatch(result));
+                let match = {};
+                match.name = result.settings.game_name;
+                match.n_players = result.players.length;
+                match.max = result.settings.max_players;
+                matches.pugh(match);
             }
             console.log("result");
             console.log(matches);
@@ -60,7 +64,7 @@ class Match{
             //if server created successfully
             // add to settings, the port and additional information ex:
             settings.status = "waiting";
-            
+
             //insert into database
             let insert_match = {};
             insert_match.players = [];
@@ -79,105 +83,38 @@ class Match{
             return { status: 500, result: { msg: "Internal server error" }};
         }  
     }
-
-}
-
-module.exports = Match;
-
-/* 
-class UnityServer {
-    constructor(match_id, max_players, server_unity_id, games_pool,jogos,
-        player, log, isPrivate, game_name,isOfficial, port, child, status) {
-        this.match_id= match_id;
-        this.max_players = max_players;
-        this.games_pool = games_pool;
-        this.isPrivate = isPrivate;
-        this.settings= {
-            server_unity_id: server_unity_id,
-            player: player,
-            jogos: jogos,
-            log: log
-        };
-        this.game_name = game_name;
-        this.isOfficial = isOfficial;
-        this.port = port;
-        this.child = child;
-        this.status = status;
-    }
-    export() {
-        let unityserver=new UnityServer();
-        unityserver.match_id= this.match_id;
-        unityserver.max_players = this.max_players;
-        unityserver.isPrivate = this.isPrivate;
-        unityserver.game_name = this.game_name;
-        unityserver.isOfficial = this.isOfficial;
-        unityserver.port = this.port;
-        unityserver.child = this.child;
-        unityserver.status = this.status;     
-        return unityserver; 
-    }
-
-    static async GetAllLobbies() {
+    static async JoinCommunityLobby(code) {
         try {
-            let lobbies= [];
-            let results= await client.collection("unity")
-                .find({isPrivate: false,
-                       isOfficial: false,
-                       status: "waiting"})
-                .toArray()
-                console.log(results);
-            for (let result of results) {
-                lobbies.push(dbLobbiestoLobby(result));
-            }
-
-            return { status: 200, result: lobbies}
-        } catch (err) {
-            console.log(err);
-            return { status: 500, result: err };
-        }  
-    }
-
-      
-    static async CreateUnityServerPublic( max_players, game_name,
-        games_pool, match_id, port, child) {
-        try {
-            let db = client.collection("unity")
-            //missing crucial information verification
-            if(!game_name || !match_id || !port || !child)
-                return {status: 422,result: {
-                    msg:"Bad Data"
-                }}
-            if(!games_pool || games_pool==[] ){ games_pool="all"}
-            if(max_players<=0){max_players=4}
-            
-            let dbResult = await db.find({ game_name: game_name}).toArray();
-            if(dbResult.length){
+            db = client.collection("match")
+            let dbResult = await db.find({ "unity_server.settings.pin": code}).toArray();
+            if(!dbResult.length){
                 return {status: 400, result: {
-                    msg:"this name already exists"
+                    msg:"server not found"
                 }}
             };
+            let unity_server =dbMatchtoMatch(dbResult)
 
-            let insert_unityserver = new UnityServer();
-            insert_unityserver.isPrivate = false;
-            insert_unityserver.max_players = max_players;
-            insert_unityserver.game_name = game_name;
-            insert_unityserver.games_pool = games_pool;
-            insert_unityserver.isOfficial = false;
-            insert_unityserver.match_id = match_id;
-            insert_unityserver.match_id = port;
-            insert_unityserver.child = child;
-            insert_unityserver.status = "waiting";
+            //full lobby verification
+            if(unity_server.players.length >= unity_server.settings.max_players){
+                return {status: 400, result: {
+                    msg:"Server full please try again at a later date"
+                }} 
+            }
 
-            dbResult = await db.insertOne(insert_unityserver);
-            let unityserver_id = dbResult.insertedId;
-            return {status: 200, result: {
-                msg:"unity server created sucessfully"
-            }}
-        } catch (err) {
-            console.log(err);
-            return { status: 500, result: { msg: "Internal server error" }};
-        }  
-    }
+            //official lobby verification
+            if(unity_server.settings.isOfficial == true){
+                return {status: 400, result: {
+                    msg:"this server cannot be accessed manually"
+                }}  
+            }
+            let full_ip= unity_server.setitngs.ip + unity_server.settings.port
+            return {status: 200, result: full_ip}
+            } catch (err) {
+                console.log(err);
+                return { status: 500, result: { msg: "Internal server error" }};
+            } 
+        }
+
 
 }
-*/
+module.exports = Match;
