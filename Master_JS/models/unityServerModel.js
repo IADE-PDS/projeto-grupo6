@@ -116,6 +116,47 @@ class Match{
         }  
     }
 
+
+    static async JoinCommunityLobby(server_id, code) {
+        try {
+            db = client.collection("unity")
+            //missing lobby verification
+            let dbResult = await db.find({ server_unity_id: server_id}).toArray();
+            if(!dbResult.length){
+                return {status: 400, result: {
+                    msg:"server not found"
+                }}
+            };
+            let unity_server =dbMatchtoMatch(dbResult)
+            //full lobby verification
+            if(unity_server.players.length >= unity_server.settings.max_players){
+                return {status: 400, result: {
+                    msg:"Server full please try again at a later date"
+                }} 
+            }
+            //official lobby verification
+            if(unity_server.settings.isOfficial == true){
+                return {status: 400, result: {
+                    msg:"this server cannot be accessed manually"
+                }}  
+            }
+            // metodo de verificação pode ter de ser alterado
+            if(unity_server.settings.isPrivate == true && code != unity_server.settings.pin){ 
+                return {status: 400, result: {
+                    msg:"this server cannot be accessed manually"
+                }}  
+            }
+            let ip = "192.xx.xx.xx:"; // ALTERAR NO FUTURO
+            let full_ip= ip + unity_server.settings.port
+            return {status: 200, result: full_ip}
+            } catch (err) {
+                console.log(err);
+                return { status: 500, result: { msg: "Internal server error" }};
+            } 
+        }
+
+
+
 }
 
 module.exports = Match;
