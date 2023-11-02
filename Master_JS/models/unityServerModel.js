@@ -9,12 +9,12 @@ const client = db.getdatabase();
 function dbMatchtoMatch(dbr)  {
     return new Match(dbr.server_unity_id, dbr.players, dbr.games, dbr.log, dbr.settings.max_players,
         dbr.settings.games_pool ,dbr.settings.isPrivate, dbr.settings.game_name, dbr.settings.isOfficial, dbr.settings.port,
-        dbr.settings.slave, dbr.settings.status, dbr.settings.pin);
+        dbr.settings.ip, dbr.settings.status, dbr.settings.pin);
 }
 
 class Match{
     constructor(  server_unity_id, players, games, log, max_players, games_pool,
-        isPrivate, game_name,isOfficial, port, slave, status, pin){
+        isPrivate, game_name,isOfficial, port, ip, status, pin){
         this.server_unity_id = server_unity_id;
         this.players = players;
         this.games = games;
@@ -26,7 +26,7 @@ class Match{
             game_name: game_name,
             isOfficial: isOfficial,
             port: port,
-            slave: slave,
+            ip: ip,
             status: status,
             pin: pin,
         };
@@ -44,7 +44,7 @@ class Match{
         match.settings.game_name = this.settings.game_name
         match.settings.isOfficials = this.settings.isOfficials
         match.settings.port = this.settings.port
-        match.settings.slave = this.settings.slave
+        match.settings.ip = this.settings.ip
         match.settings.status = this.settings.status
         match.settings.status = this.settings.pin
         return match; 
@@ -75,11 +75,11 @@ class Match{
 
 
     static async CreateUnityServerPublic( max_players, game_name,
-        games_pool, match_id, port, slave) {
+        games_pool, match_id, port, ip) {
         try {
             let db = client.collection("match")
             //missing crucial information verification
-            if(!game_name || !match_id || !port || !slave)
+            if(!game_name || !match_id || !port || !ip)
                 return {status: 422,result: {
                     msg:"Bad Data"
                 }}
@@ -104,7 +104,7 @@ class Match{
             insert_match.isOfficial = false;
             insert_match.match_id = match_id;
             insert_match.match_id = port;
-            insert_match.slave = slave;
+            insert_match.ip = ip;
             insert_match.status = "waiting";
             insert_match.pin = null;
 
@@ -120,11 +120,11 @@ class Match{
     }
 
 
-    static async JoinCommunityLobby(server_id, code) {
+    static async JoinCommunityLobby(code) {
         try {
             db = client.collection("match")
             //missing lobby verification
-            let dbResult = await db.find({ server_unity_id: server_id}).toArray();
+            let dbResult = await db.find({ "unity_server.settings.pin": code}).toArray();
             if(!dbResult.length){
                 return {status: 400, result: {
                     msg:"server not found"
@@ -149,7 +149,7 @@ class Match{
                     msg:"this server cannot be accessed manually"
                 }}  
             }
-            let ip = "192.xx.xx.xx:"; // ALTERAR NO FUTURO
+            let ip = unity_server.settings.ip; // ALTERAR NO FUTURO
             let full_ip= ip + unity_server.settings.port
             return {status: 200, result: full_ip}
             } catch (err) {
@@ -167,7 +167,7 @@ module.exports = Match;
 /* 
 class UnityServer {
     constructor(match_id, max_players, server_unity_id, games_pool,jogos,
-        player, log, isPrivate, game_name,isOfficial, port, slave, status) {
+        player, log, isPrivate, game_name,isOfficial, port, ip, status) {
         this.match_id= match_id;
         this.max_players = max_players;
         this.games_pool = games_pool;
@@ -181,7 +181,7 @@ class UnityServer {
         this.game_name = game_name;
         this.isOfficial = isOfficial;
         this.port = port;
-        this.slave = slave;
+        this.ip = ip;
         this.status = status;
     }
     export() {
@@ -192,7 +192,7 @@ class UnityServer {
         unityserver.game_name = this.game_name;
         unityserver.isOfficial = this.isOfficial;
         unityserver.port = this.port;
-        unityserver.slave = this.slave;
+        unityserver.ip = this.ip;
         unityserver.status = this.status;     
         return unityserver; 
     }
@@ -219,11 +219,11 @@ class UnityServer {
 
       
     static async CreateUnityServerPublic( max_players, game_name,
-        games_pool, match_id, port, slave) {
+        games_pool, match_id, port, ip) {
         try {
             let db = client.collection("unity")
             //missing crucial information verification
-            if(!game_name || !match_id || !port || !slave)
+            if(!game_name || !match_id || !port || !ip)
                 return {status: 422,result: {
                     msg:"Bad Data"
                 }}
@@ -245,7 +245,7 @@ class UnityServer {
             insert_unityserver.isOfficial = false;
             insert_unityserver.match_id = match_id;
             insert_unityserver.match_id = port;
-            insert_unityserver.slave = slave;
+            insert_unityserver.ip = ip;
             insert_unityserver.status = "waiting";
 
             dbResult = await db.insertOne(insert_unityserver);
