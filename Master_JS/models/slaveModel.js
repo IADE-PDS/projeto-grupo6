@@ -25,10 +25,12 @@ class Slave {
             return {status: 500, result: { msg: "Internal server error" }};
         }  
     }
-    static async CreateServer(user) {
+    static async CreateServer(settings) {
         try {
-            //recieve unity_server collection from the unity server
-            //call unityServer here to create
+            //recieves the settings 
+            //chooses from the database a slave to create the server on
+            //sends an http request to the slave to create the slave
+            //if successfull send back the ip and port opened
         } catch (err) {
             console.log(err);
             return { status: 500, result: { msg: "Internal server error" }};

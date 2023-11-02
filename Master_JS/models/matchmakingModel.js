@@ -36,7 +36,11 @@ class Marchmaking {
     }
     static async SearchServer() {
         try {
-
+            //if there are none
+            this.CreateServer();
+            //if there are choose one and 
+            
+            this.ConnectServer();
         } catch (err) {
             console.log(err);
             return { status: 500, result: { msg: "Internal server error" }};
