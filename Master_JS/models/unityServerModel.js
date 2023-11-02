@@ -9,12 +9,12 @@ const client = db.getdatabase();
 function dbMatchtoMatch(dbr)  {
     return new Match(dbr.server_unity_id, dbr.players, dbr.games, dbr.log, dbr.settings.max_players,
         dbr.settings.games_pool ,dbr.settings.isPrivate, dbr.settings.game_name, dbr.settings.isOfficial, dbr.settings.port,
-        dbr.settings.child, dbr.settings.status);
+        dbr.settings.slave, dbr.settings.status, dbr.settings.pin);
 }
 
 class Match{
     constructor(  server_unity_id, players, games, log, max_players, games_pool,
-        isPrivate, game_name,isOfficial, port, child, status){
+        isPrivate, game_name,isOfficial, port, slave, status, pin){
         this.server_unity_id = server_unity_id;
         this.players = players;
         this.games = games;
@@ -26,8 +26,9 @@ class Match{
             game_name: game_name,
             isOfficial: isOfficial,
             port: port,
-            child: child,
+            slave: slave,
             status: status,
+            pin: pin,
         };
     }
     export() {
@@ -43,15 +44,16 @@ class Match{
         match.settings.game_name = this.settings.game_name
         match.settings.isOfficials = this.settings.isOfficials
         match.settings.port = this.settings.port
-        match.settings.child = this.settings.child
+        match.settings.slave = this.settings.slave
         match.settings.status = this.settings.status
+        match.settings.status = this.settings.pin
         return match; 
     }
 
     static async GetAllMatches() {
         try {
             let matches= [];
-            let results= await client.collection("unity")
+            let results= await client.collection("match")
                 .find({"settings.isPrivate": false,
                        "settings.isOfficial": false,
                        "settings.status": "waiting"})
@@ -73,11 +75,11 @@ class Match{
 
 
     static async CreateUnityServerPublic( max_players, game_name,
-        games_pool, match_id, port, child) {
+        games_pool, match_id, port, slave) {
         try {
-            let db = client.collection("unity")
+            let db = client.collection("match")
             //missing crucial information verification
-            if(!game_name || !match_id || !port || !child)
+            if(!game_name || !match_id || !port || !slave)
                 return {status: 422,result: {
                     msg:"Bad Data"
                 }}
@@ -102,8 +104,9 @@ class Match{
             insert_match.isOfficial = false;
             insert_match.match_id = match_id;
             insert_match.match_id = port;
-            insert_match.child = child;
+            insert_match.slave = slave;
             insert_match.status = "waiting";
+            insert_match.pin = null;
 
             dbResult = await db.insertOne(insert_match);
             let match_id = dbResult.insertedId;
@@ -119,7 +122,7 @@ class Match{
 
     static async JoinCommunityLobby(server_id, code) {
         try {
-            db = client.collection("unity")
+            db = client.collection("match")
             //missing lobby verification
             let dbResult = await db.find({ server_unity_id: server_id}).toArray();
             if(!dbResult.length){
@@ -164,7 +167,7 @@ module.exports = Match;
 /* 
 class UnityServer {
     constructor(match_id, max_players, server_unity_id, games_pool,jogos,
-        player, log, isPrivate, game_name,isOfficial, port, child, status) {
+        player, log, isPrivate, game_name,isOfficial, port, slave, status) {
         this.match_id= match_id;
         this.max_players = max_players;
         this.games_pool = games_pool;
@@ -178,7 +181,7 @@ class UnityServer {
         this.game_name = game_name;
         this.isOfficial = isOfficial;
         this.port = port;
-        this.child = child;
+        this.slave = slave;
         this.status = status;
     }
     export() {
@@ -189,7 +192,7 @@ class UnityServer {
         unityserver.game_name = this.game_name;
         unityserver.isOfficial = this.isOfficial;
         unityserver.port = this.port;
-        unityserver.child = this.child;
+        unityserver.slave = this.slave;
         unityserver.status = this.status;     
         return unityserver; 
     }
@@ -216,11 +219,11 @@ class UnityServer {
 
       
     static async CreateUnityServerPublic( max_players, game_name,
-        games_pool, match_id, port, child) {
+        games_pool, match_id, port, slave) {
         try {
             let db = client.collection("unity")
             //missing crucial information verification
-            if(!game_name || !match_id || !port || !child)
+            if(!game_name || !match_id || !port || !slave)
                 return {status: 422,result: {
                     msg:"Bad Data"
                 }}
@@ -242,7 +245,7 @@ class UnityServer {
             insert_unityserver.isOfficial = false;
             insert_unityserver.match_id = match_id;
             insert_unityserver.match_id = port;
-            insert_unityserver.child = child;
+            insert_unityserver.slave = slave;
             insert_unityserver.status = "waiting";
 
             dbResult = await db.insertOne(insert_unityserver);
