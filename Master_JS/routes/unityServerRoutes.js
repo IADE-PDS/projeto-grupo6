@@ -8,7 +8,7 @@ const tokenSize = 64;
 router.get('/general',  async function (req, res, next) {
     try {
         console.log("Get all lobbies");
-        let result = await unityServer.getAllLobbies();
+        let result = await unityServer.GetAllMatches();
         if (result.status != 200)
             res.status(result.status).send(result.result);
         else {
