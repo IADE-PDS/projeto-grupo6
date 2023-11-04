@@ -34,19 +34,33 @@ class Marchmaking {
     constructor() {
 
     }
-    static async SearchServer() {
+    static async SearchServer(user) {
         try {
-            //search on db for servers with the server.settings.isOfficial = true;
-            //if there are none
-            let result = this.CreateServer();
-            //if there are choose one and 
-            
-            this.ConnectServer();
+            var server;
+            let results = await client.collection("match")
+                .find({"settings.isOfficial": true,
+                       "settings.status": "waiting"})
+                .toArray();
+            if(results.length){
+                for (let result of results){
+                    if(unity_server.players.length < unity_server.settings.max_players){
+                        server = result;
+                        break;
+                }
+            }
+            }
+            if(!server){
+                server = this.CreateServer();
+            }
+            return server
+            this.ConnectServer(user,server);//trocar por só responder mas isso fica para dps 
         } catch (err) {
             console.log(err);
             return { status: 500, result: { msg: "Internal server error" }};
-        }  
+        }
     }
+
+
     static async CreateServer() {
         try {
 
@@ -55,7 +69,7 @@ class Marchmaking {
             return { status: 500, result: { msg: "Internal server error" }};
         }  
     }
-    static async ConnectServer(user) {
+    static async ConnectServer(user,server) {
         try {
 
         } catch (err) {
