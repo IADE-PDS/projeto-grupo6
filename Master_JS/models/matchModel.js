@@ -8,12 +8,12 @@ const Slave = require("./slaveModel");
 function dbMatchtoMatch(dbr)  {
     return new Match(dbr.server_unity_id, dbr.players, dbr.games, dbr.log, dbr.settings.max_players,
         dbr.settings.games_pool ,dbr.settings.isPrivate, dbr.settings.game_name, dbr.settings.isOfficial, dbr.settings.port,
-        dbr.settings.child, dbr.settings.status);
+        dbr.settings.slave_id, dbr.settings.status);
 }
 
 class Match{
     constructor( players, games, log, max_players, games_pool,
-        isPrivate, game_name,isOfficial, port, ip, status){
+        isPrivate, game_name,isOfficial, port, slave_id, status){
         this.players = players;
         this.games = games;
         this.log = log;
@@ -24,7 +24,7 @@ class Match{
             game_name: game_name,
             isOfficial: isOfficial,
             port: port,
-            ip:ip,
+            slave:slave_id,
             status: status,
         };
     };

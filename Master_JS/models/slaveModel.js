@@ -28,7 +28,8 @@ class Slave {
     static async CreateServer(settings) {
         try {
             //recieves the settings 
-            //chooses from the database a slave to create the server on
+            //chooses from the database a slave to create the server on.(on this request also ask for the count of servers open, on each slave, and choose the one with the less)
+            //should find a slave with the less servers
             //sends an http request to the slave to create the slave
             //if successfull send back the ip and port opened
         } catch (err) {

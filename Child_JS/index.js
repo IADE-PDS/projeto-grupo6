@@ -15,8 +15,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-const usersRouter = require("./routes/usersRoutes");
-app.use("/api/users",usersRouter);
+const gameRouter = require("./routes/gameRoutes");
+app.use("/api/game",gameRouter);
 
 app.use((err, req, res, next) => {
   console.error(err)
@@ -27,5 +27,10 @@ const port = parseInt(process.env.port || '8081');
 app.listen(port,function() {
   console.log("Server running at http://localhost:"+port);
 });
+
+
+
+
+
 
 
