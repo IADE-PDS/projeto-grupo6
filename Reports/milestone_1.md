@@ -115,7 +115,9 @@ Para a base de dados, utilizamos MongoDB que não funciona da forma tradicional 
 
 ### Unity Server
 O Unity Server irá conter a porta do servidor e um ID do slave que o criou. Sobre a informação do jogo em si irá conter basicamente as definições todas que o utilizador escolher meter no servidor, como por exemplo, o número de jogadores limite, os jogos permitidos, etc. Quando um servidor é criado pelo servidor matchmaking, as definição são predefinidas, a coleção terá um parâmetro a indicar se é “oficial” ou não.
-Esta tabela também terá o ID da Match associada. Este também será replicado.
+Esta tabela também terá o ID da Match associada. Este também será replicado. 
+
+<img src="https://cdn.discordapp.com/attachments/1134884450891731086/1170695059784601630/image.png?ex=6559f9bc&is=654784bc&hm=d9b3836627e8b9e363d41489d919af3af6c7decaa23dbc47aef68412f2ab06a0&"/>
 
 ### Matchmaking Server
 Este verifica se existe uma partida para o jogador que quer jogar, se não houver cria uma.
