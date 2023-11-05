@@ -32,7 +32,7 @@ class Match{
     static async GetAllMatches() {
         try {
             let matches= [];
-            let results= await client.collection("unity")
+            let results= await client.collection("match")
                 .find({"settings.isPrivate": false,
                        "settings.isOfficial": false,
                        "settings.status": "waiting"})
