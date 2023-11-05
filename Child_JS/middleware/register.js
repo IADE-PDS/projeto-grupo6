@@ -4,7 +4,7 @@ const axios = require('axios');
 
 module.exports.register = async function() {
     try {
-      const response = await axios.post(process.env.MAIN_SERVER+'api/child/register', {
+      const response = await axios.post(process.env.MAIN_SERVER+'api/slave/register', {
         ip: networkInterfaces.Ethernet[3].address,
         pass:process.env.MAIN_SERVER_PASSWORD
       });

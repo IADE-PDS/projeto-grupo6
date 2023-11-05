@@ -47,14 +47,6 @@ class Marchmaking {
             return { status: 500, result: { msg: "Internal server error" }};
         }  
     }
-    static async CreateServer() {
-        try {
-
-        } catch (err) {
-            console.log(err);
-            return { status: 500, result: { msg: "Internal server error" }};
-        }  
-    }
     static async ConnectServer(user) {
         try {
 

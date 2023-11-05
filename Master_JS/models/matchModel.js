@@ -108,7 +108,7 @@ class Match{
                     msg:"this server cannot be accessed manually"
                 }}  
             }
-            let full_ip= unity_server.settings.ip + unity_server.settings.port
+            let full_ip= unity_server.settings.ip +":"+ unity_server.settings.port
             return {status: 200, result: full_ip}
             } catch (err) {
                 console.log(err);

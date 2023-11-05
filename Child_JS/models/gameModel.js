@@ -1,6 +1,5 @@
 var Docker = require('dockerode');
-const portscanner = require('portscanner');
-//! PORT RANGE 27000-271000
+//! PORT RANGE 27000-27100
 
 
 

@@ -1,0 +1,79 @@
+version: '3'
+services:
+  unity_server_1:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "27001:7777/udp"
+
+  unity_server_2:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "27002:7777/udp"
+ 
+
+  unity_server_3:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "27003:7777/udp"
+
+
+  unity_server_4:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "27004:7777/udp"
+
+
+  unity_server_5:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "27005:7777/udp"
+
+
+  unity_server_6:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "27006:7777/udp"
+ 
+
+  unity_server_7:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "27007:7777/udp"
+
+
+  unity_server_8:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "27008:7777/udp"
+  
+
+  unity_server_9:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "27009:7777/udp"
+
+
+  unity_server_10:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "27010:7777/udp"
