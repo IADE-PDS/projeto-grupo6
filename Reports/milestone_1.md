@@ -102,8 +102,23 @@ Stick Fight Game, inspirou a estética do MiniGamerino, e tambem inspirou alguns
 Nos vamos adaptar este stilo por ser bem simples. 
 
 ![stickmanfight](https://cdn.akamai.steamstatic.com/steam/apps/674940/capsule_616x353.jpg?t=1667202217)
+---
 ## Arquitetura da Solução
-<img src="https://cdn.discordapp.com/attachments/1098206169014747177/1163915564742348900/image-removebg-preview.png?ex=65414fd7&is=652edad7&hm=4010fe8c58e0447c952e62012a00e5952a8fa99ad39d642acb78a87d78104337&"  />
+<img src="https://media.discordapp.net/attachments/1134884450891731086/1170678475980541972/image.png?ex=6559ea4a&is=6547754a&hm=bb8fc182799bed8f1795d744d16732a826fdccf5a80936ea9086ce41e120aca7&=&width=560&height=671"/>
+
+### Ngnix
+O Nginx funciona por diretórios. Começando por um Http onde vai incluir todos os tipos de MIME, isto é, uma maneira de classifcar tipos de ficheiros da internet, como por exemplo: "text/html". De seguida, um diretório upstream, este serve para criar um grupo de servidores. No nosso caso, o nome do nosso upstream é backend. Nesse diretório Upstream, colocamos o metódo de load balacing, o Least Connections será o ideal para o que idealizamos, este consiste no envio de conexões para o servidor que tiver menos conexões no momento. Depois ainda dentro do Upstream, colocamos os ips dos servidores e a porta. Saindo do Upstream, criamos outro diretório, Server, este que incluirá a porta onde ouvirá os pedidos: 43 e um diretório Location, este contêm apenas o que se chama de Proxy Pass, que é usado quando uma instância de Nginx que trata de várias tarefas, 
+e precisa de mandar pedidos para outros servidores, aí colocamos o url do Backend que criámos como Upstream.
+
+### Bases de dados e Replicação
+Para a base de dados, utilizamos MongoDB que não funciona da forma tradicional como estamos habituados, em vez de utilizar tabelas e colunas, este utiliza coleções e documentos. Uma coleção consiste num conjunto de documentos, o que é equivalente às tabelas numa base de dados relacional. Um documento consiste em vários “valor-chave”, que é a unidade básica dos dados em MongoDB. No total teremos três bases de dados, estas todas estaram num Replica Set, em que uma das bds será a primária, responsável pela escrita e leitura de dados, e as restantes serão bds secundárias que apenas podem ler dados. A razão de ter três bases de dados, dá-se ao facto que o MongoDB estabeleceu o conceito de "eleição", ou seja, caso a bd primária for abaixo, para o sistema conseguir realizar uma eleição para decidir qual é das secundárias tornar-se-á primária, é necessário mais que uma bd disponível para votar. Se tivessemos apenas duas bds, uma primária e outra secundária, se a primária fosse abaixo, a secundária não conseguiria eleger-se como primária porque o sistema de eleição foi feito para mais que uma bd.
+
+### Unity Server
+O Unity Server irá conter a porta do servidor e um ID do slave que o criou. Sobre a informação do jogo em si irá conter basicamente as definições todas que o utilizador escolher meter no servidor, como por exemplo, o número de jogadores limite, os jogos permitidos, etc. Quando um servidor é criado pelo servidor matchmaking, as definição são predefinidas, a coleção terá um parâmetro a indicar se é “oficial” ou não.
+Esta tabela também terá o ID da Match associada. Este também será replicado.
+
+### Matchmaking Server
+Este verifica se existe uma partida para o jogador que quer jogar, se não houver cria uma.
 
 ---
 ## Personas
