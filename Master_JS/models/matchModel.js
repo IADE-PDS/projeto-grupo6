@@ -29,6 +29,16 @@ class Match{
         };
     };
 
+
+    static async InsertMatchonDB(Match){
+        try{
+            let dbResult = await db.insertOne(Match);
+            return dbResult;
+        } catch (err) {
+            console.log(err);
+            return { status: 500, result: err };
+        }  
+    }
     static async GetAllMatches() {
         try {
             let matches= [];
@@ -56,16 +66,14 @@ class Match{
             return { status: 500, result: err };
         }  
     }
-    static async CreateUnityServerPublic(settings) {
+    static async CreateUnityServer(settings) {
         try {
             let db = client.collection("match")
-            //! Verify if every settings exist and ar set correctly
+            //! Verify if every settings exist and are set correctly
             //if no name then cant create
-            let result = Slave.CreateServer(settings);
             //if server created successfully
             // add to settings, the port and additional information ex:
-            settings.status = "waiting";
-
+            settings.status = "starting";
             //insert into database
             let insert_match = {};
             insert_match.players = [];
@@ -73,6 +81,16 @@ class Match{
             insert_match.log = [];
             insert_match.settings = settings;
             let dbResult = await db.insertOne(insert_match);
+
+            let result = await Slave.CreateServer(dbResult.insertedId);
+            await db.deleteOne({_id: dbResult.insertedId});
+            if(result.status != 200){
+                
+                return {status: result.status, result: {msg:"something went wrong"}}
+            }
+            //se falho
+            
+            
             //return status 200 and the ip with the port from the server
             //the unity app recieves the status 200 and enters on the server with the ip and port
             return {status: 200, result: {

@@ -4,7 +4,6 @@ FROM ubuntu:bionic
 # This is where you tell the container what files you want to put inside
 # I just copy my entire "Build_Linux" folder into the base directory "." of the container
 COPY ./Build_Linux/ .
-COPY ./.env .
 
 # I'm running my game server on port *port*. You have to tell docker what ports you plan to use
 EXPOSE 7777

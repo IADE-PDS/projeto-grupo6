@@ -25,7 +25,9 @@ router.delete('/delete', async function (req, res, next) {
         res.status(500).send("Internal server error");
     }
 });
-//creating a game server 
+module.exports = router;
+/*
+//creating a game server
 router.post('/startGame', async function (req, res, next) {
     try {
         //!each unity server need to have its own Password 
@@ -49,4 +51,4 @@ router.patch('/updateGame', async function (req, res, next) {
         res.status(500).send("Internal server error");
     }
 });
-module.exports = router;
+*/

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const matchModel = require("../models/matchModel");
+const matchmaking = require("../models/matchmakingModel")
 const utils = require("../config/utils");
 const auth = require("../middleware/auth");
 const tokenSize = 64;
@@ -32,5 +33,14 @@ router.patch('/update', async function (req, res, next) {
         res.status(500).send("Internal server error");
     }
 });
-
+router.get('/matchmaking', async function (req, res, next) {
+    try {
+        let result = await matchmaking.SearchServer();
+        console.log(result);
+        res.status(200).send("routes");
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Internal server error");
+    }
+});
 module.exports = router;
