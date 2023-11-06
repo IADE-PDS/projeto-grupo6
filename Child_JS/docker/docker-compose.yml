@@ -6,13 +6,17 @@ services:
       dockerfile: Dockerfile
     ports:
       - "27001:7777/udp"
-      
+    environment:
+      - GAME_ID=${GAME_ID}
+
   unity_server_2:
     build: 
       context: .
       dockerfile: Dockerfile
     ports:
       - "27002:7777/udp"
+    environment:
+      - GAME_ID=${GAME_ID}
  
 
   unity_server_3:
@@ -21,6 +25,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "27003:7777/udp"
+    environment:
+      - GAME_ID=${GAME_ID}
 
 
   unity_server_4:
@@ -29,6 +35,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "27004:7777/udp"
+    environment:
+      - GAME_ID=${GAME_ID}
 
 
   unity_server_5:
@@ -37,6 +45,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "27005:7777/udp"
+    environment:
+      - GAME_ID=${GAME_ID}
 
 
   unity_server_6:
@@ -45,7 +55,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "27006:7777/udp"
- 
+    environment:
+      - GAME_ID=${GAME_ID}
 
   unity_server_7:
     build: 
@@ -53,7 +64,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "27007:7777/udp"
-
+    environment:
+      - GAME_ID=${GAME_ID}
 
   unity_server_8:
     build: 
@@ -61,7 +73,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "27008:7777/udp"
-  
+    environment:
+      - GAME_ID=${GAME_ID}
 
   unity_server_9:
     build: 
@@ -69,7 +82,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "27009:7777/udp"
-
+    environment:
+      - GAME_ID=${GAME_ID}
 
   unity_server_10:
     build: 
@@ -77,3 +91,5 @@ services:
       dockerfile: Dockerfile
     ports:
       - "27010:7777/udp"
+    environment:
+      - GAME_ID=${GAME_ID}
