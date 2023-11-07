@@ -31,7 +31,6 @@ class Slave {
     }
     static async CreateServer(Match_id) {
         try {
-            console.log(Match_id);
             let collection = client.collection("slave");
             let slave = await collection.aggregate([
                 {$sort: { n_unityServers: 1 }},{$limit: 1}]).toArray();
@@ -43,12 +42,11 @@ class Slave {
             }
             let url = "http://"+slave.ip+":"+process.env.SLAVEPORT+"/api/game/start"
             let response = await axios.post(url, postData);
-            console.log(slave.ip);
-
+            let server = {ip:slave.ip,port:response.data.ports}
             //sends an http request to the slave to create the slave
             //send back the slave.ip and the port that comes from the http request
             //if successfull  send back the ip and port opened
-            return {status: 200, result: {server:server}}
+            return {status: 200, result: {ip:slave.ip,port:response.data.ports}}
         } catch (err) {
             console.log(err);
             return { status: 500, result: { msg: "Internal server error" }};

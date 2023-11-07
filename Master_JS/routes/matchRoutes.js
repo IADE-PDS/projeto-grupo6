@@ -36,7 +36,7 @@ router.patch('/update', async function (req, res, next) {
 router.get('/matchmaking', async function (req, res, next) {
     try {
         let result = await matchmaking.SearchServer();
-        console.log(result);
+        //console.log(result);
         res.status(200).send("routes");
     } catch (err) {
         console.log(err);

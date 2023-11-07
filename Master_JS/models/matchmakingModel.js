@@ -62,8 +62,6 @@ class Marchmaking {
                 //if(server.status != 200)
                   //  return {status: 404, result: {msg:"Matchmaking not available at the moment"}}
             }
-
-
             return {status: 200, result: {server:server}}
         } catch (err) {
             console.log(err);

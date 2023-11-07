@@ -13,7 +13,7 @@ function dbMatchtoMatch(dbr)  {
 
 class Match{
     constructor( players, games, log, max_players, games_pool,
-        isPrivate, game_name,isOfficial, port, slave_id, status){
+        isPrivate, game_name,isOfficial, port, ip, status){
         this.players = players;
         this.games = games;
         this.log = log;
@@ -24,7 +24,7 @@ class Match{
             game_name: game_name,
             isOfficial: isOfficial,
             port: port,
-            slave:slave_id,
+            ip:ip,
             status: status,
         };
     };
@@ -79,18 +79,29 @@ class Match{
             insert_match.players = [];
             insert_match.games = [];
             insert_match.log = [];
+            settings.ip = undefined;
+            settings.port = undefined;
             insert_match.settings = settings;
+
             let dbResult = await db.insertOne(insert_match);
 
             let result = await Slave.CreateServer(dbResult.insertedId);
-            await db.deleteOne({_id: dbResult.insertedId});
+            console.log(result);
+            console.log(result.result.ip);
+            //await db.deleteOne({_id: dbResult.insertedId});
             if(result.status != 200){
-                
+                await db.deleteOne({_id: dbResult.insertedId});
                 return {status: result.status, result: {msg:"something went wrong"}}
             }
-            //se falho
-            
-            
+            let id = dbResult.insertedId
+            dbResult = await db.updateOne({_id: id},
+                        {
+                            $set: { 
+                                "settings.ip": result.result.ip,
+                                "settings.port":result.result.port
+                            }
+                        });
+            console.log(dbResult);
             //return status 200 and the ip with the port from the server
             //the unity app recieves the status 200 and enters on the server with the ip and port
             return {status: 200, result: {
