@@ -8,7 +8,7 @@ const { exec } = require('child_process');
 const docker = new Docker({ socketPath: '/var/run/docker.sock' }); 
 
 const composeFilePath = './docker/docker-compose.yml';
-const fullcomposeFilePath = '~/Slave_js/docker/docker-compose.yml';
+const fullcomposeFilePath = '/home/user/Slave_js/docker/docker-compose.yml';
 
 
 var services = [];
@@ -31,7 +31,7 @@ class Game {
             let containers = await docker.listContainers({ all: true });
             for(let container of containers){
                 for(let i = 0; i<tempServices.length;i++){
-                    let service = tempServices[i];
+                    let service = tempServices[i]; 
                     let name = container.Image;
                     name = name.split("-")[1];
                     if(name == service.name){
@@ -46,7 +46,7 @@ class Game {
             let service = tempServices[0];
             let port = service.config.ports[0];
             port = port.split(":")[0];
-            let composeCommand = 'GAME_ID='+id+' docker compose -f /home/user/Slave_js/docker/docker-compose.yml up -d '+service.name;
+            let composeCommand = 'GAME_ID='+id+' docker compose -f '+fullcomposeFilePath+' up -d '+service.name;
             exec(composeCommand, (error, stdout, stderr) => {
                 if (error) {
                   console.error(`Error: ${error}`);
@@ -68,6 +68,18 @@ class Game {
             return { status: 500, result: { msg: "Internal server error" }};
         }  
     }
+    static async close_game(port){
+        try {
+            //search on the opened container for a contianer in that port
+            //docker compose down *nome do container*
+            //return true
+            
+        } catch (err) {
+            console.log(err);
+            return { status: 500, result: { msg: "Internal server error" }};
+        }  
+    }
+
 
 }
 module.exports = Game;

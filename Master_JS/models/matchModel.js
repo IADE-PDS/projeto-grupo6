@@ -12,12 +12,12 @@ function dbMatchtoMatch(dbr)  {
 }
 
 class Match{
-    constructor( players, games, log, max_players, games_pool,
+    constructor( players, games, log, max_players, games_pool,//! INFORMAÇÔES DO JOGO ATUAL,INFORMAÇÔES,INFORMAÇÔES UNIVERSAIS DO PLAYER
         isPrivate, game_name,isOfficial, port, ip, status){
         this.players = players;
         this.games = games;
         this.log = log;
-        this.settings= {
+        this.settings= {//! tipos de servidores 
             max_players: max_players,
             games_pool: games_pool,
             isPrivate: isPrivate,
@@ -115,6 +115,7 @@ class Match{
     }
     static async JoinCommunityLobby(code) {
         try {
+            //!verify if players is not in a lobby already
             db = client.collection("match")
             let dbResult = await db.find({ "unity_server.settings.pin": code}).toArray();
             if(!dbResult.length){

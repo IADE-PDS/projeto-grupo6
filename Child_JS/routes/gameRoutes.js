@@ -12,4 +12,13 @@ router.post('/start', async function (req, res, next) {
         res.status(500).send("Internal server error");
     }
 });
+router.delete('/stop', async function (req, res, next) {
+    try {
+        let result = await Game.close_game(req.body.port);
+        res.status(200).send(result.result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Internal server error");
+    }
+});
 module.exports = router;

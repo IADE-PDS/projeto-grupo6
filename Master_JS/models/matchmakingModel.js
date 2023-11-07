@@ -62,7 +62,8 @@ class Marchmaking {
                 //if(server.status != 200)
                   //  return {status: 404, result: {msg:"Matchmaking not available at the moment"}}
             }
-            return {status: 200, result: {server:server}}
+            let result_server = {ip:server.ip, port:server.port}
+            return {status: 200, result: {server:result_server}}
         } catch (err) {
             console.log(err);
             return { status: 500, result: { msg: "Internal server error" }};
