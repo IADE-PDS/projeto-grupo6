@@ -70,6 +70,30 @@ class Game {
     }
     static async close_game(port){
         try {
+            let close_game = null; 
+            let containers = await docker.listContainers({ all: true });
+                for(let container of containers){                   
+                        if(port == container.Ports){
+                            close_game = container.Image;
+                        }                    
+                    }
+            if(!close_game)
+                return{status: 507, result: {msg:"unable to find container"}}
+            let composeCommand = ' docker compose -f '+close_game+' down ';
+            exec(composeCommand, (error, stdout, stderr) => {
+                if (error) {
+                  console.error(`Error: ${error}`);
+                  return { status: 500, result: { msg: "Internal server error" }};
+                }  else if (stdout.includes("Started Successfully")) {
+                    return { status: 200, result: { 
+                            msg: "Started server" ,
+                            ports:port}};
+                  } else {
+                    return { status: 500, result: { msg: "Error Creating container" }};
+                }
+            });
+
+
             //search on the opened container for a contianer in that port
             //docker compose down *nome do container*
             //return true
