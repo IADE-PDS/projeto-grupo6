@@ -80,7 +80,7 @@ class Match{
             //if no name then cant create
             //if server created successfully
             // add to settings, the port and additional information ex:
-            settings.status = "starting";
+            settings.status = "waiting";
             //insert into database
             let insert_match = {};
             insert_match.players = [];
@@ -93,8 +93,6 @@ class Match{
             let dbResult = await db.insertOne(insert_match);
 
             let result = await Slave.CreateServer(dbResult.insertedId);
-            console.log(result);
-            console.log(result.result.ip);
             //await db.deleteOne({_id: dbResult.insertedId});
             if(result.status != 200){
                 await db.deleteOne({_id: dbResult.insertedId});
@@ -108,12 +106,11 @@ class Match{
                                 "settings.port":result.result.port
                             }
                         });
-            console.log(dbResult);
             //return status 200 and the ip with the port from the server
             //the unity app recieves the status 200 and enters on the server with the ip and port
             return {status: 200, result: {
                 msg:"unity server created sucessfully",
-                ip:settings.ip+":"+settings.port
+                ip:result.result.ip, port: result.result.port
             }}
         } catch (err) {
             console.log(err);

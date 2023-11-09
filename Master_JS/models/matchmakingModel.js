@@ -38,19 +38,22 @@ class Marchmaking {
     static async SearchServer() {
         try {
             var server;
-            let results = await client.collection("match")
-                .find({"settings.isOfficial": true,
-                       "settings.status": "waiting"})
-                .toArray();
+            let collection = client.collection("match")
+            let results = await collection.find({
+                "settings.isOfficial": true,
+                "settings.status": "waiting"
+            }).toArray();
             if(results.length){
                 for (let result of results){
-                    if(unity_server.players.length < unity_server.settings.max_players){
+                    //find first one that isnt on staring
+                    if(result.players.length < result.settings.max_players){
                         server = result;
                         break;
                     }
                 }
             }
-            if(!server){
+            if(!server || true){
+                server = {};
                 let settings= {
                 max_players: 4,
                 games_pool: [],
@@ -58,11 +61,15 @@ class Marchmaking {
                 game_name: "Official",
                 isOfficial: true,
                 };
-                server = await match.CreateUnityServer(settings);
-                //if(server.status != 200)
-                  //  return {status: 404, result: {msg:"Matchmaking not available at the moment"}}
+                server.settings = settings;
+                let result = await match.CreateUnityServer(settings);
+                if(result.status != 200)
+                    return {status: 404, result: {msg:"Matchmaking not available at the moment"}}
+                server.settings.ip = result.result.ip
+                server.settings.port = result.result.port
+
             }
-            let result_server = {ip:server.ip, port:server.port}
+            let result_server = {ip:server.settings.ip, port:server.settings.port}
             return {status: 200, result: {server:result_server}}
         } catch (err) {
             console.log(err);

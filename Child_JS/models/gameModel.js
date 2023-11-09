@@ -3,6 +3,7 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const { exec } = require('child_process');
 
+
 //! PORT RANGE 27000-27100
 const docker = new Docker({ socketPath: '/var/run/docker.sock' }); 
 
@@ -11,23 +12,14 @@ const fullcomposeFilePath = '/home/user/Slave_js/docker/docker-compose.yml';
 
 
 var services = [];
-try {
-    const yamlData = fs.readFileSync(composeFilePath, 'utf8');
-    const serviceobj = yaml.load(yamlData).services;
-    services = Object.keys(serviceobj).map((serviceName) => ({
-        name: serviceName,
-        config: serviceobj[serviceName],
-      }));
-  } catch (error) {
-    console.error('Error parsing YAML:', error);
-  }
-
 //!!! NOT THE BEST WAY OF RUNNING COMMANDS, because is sending mensages throw the stderr but does it succsesfully
 class Game {
     static async start_game(id) {
         try {
+            getAllServices()
             let tempServices = services;
             let containers = await docker.listContainers({ all: true });
+            console.log(services)
             for(let container of containers){
                 for(let i = 0; i<tempServices.length;i++){
                     let service = tempServices[i]; 
@@ -101,6 +93,18 @@ class Game {
     }
 
 
+}
+async function getAllServices(){
+    try {
+        const yamlData = fs.readFileSync(composeFilePath, 'utf8');
+        const serviceobj = yaml.load(yamlData).services;
+        services = Object.keys(serviceobj).map((serviceName) => ({
+            name: serviceName,
+            config: serviceobj[serviceName],
+          }));
+      } catch (error) {
+        console.error('Error parsing YAML:', error);
+      }
 }
 async function executeCommand(command) {
     return new Promise((resolve, reject) => {

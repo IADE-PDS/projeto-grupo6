@@ -42,7 +42,6 @@ class Slave {
             }
             let url = "http://"+slave.ip+":"+process.env.SLAVEPORT+"/api/game/start"
             let response = await axios.post(url, postData);
-            let server = {ip:slave.ip,port:response.data.ports}
             //sends an http request to the slave to create the slave
             //send back the slave.ip and the port that comes from the http request
             //if successfull  send back the ip and port opened
