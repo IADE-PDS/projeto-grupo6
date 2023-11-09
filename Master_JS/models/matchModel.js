@@ -30,14 +30,21 @@ class Match{
     };
 
 
-    static async InsertMatchonDB(Match){
-        try{
-            let dbResult = await db.insertOne(Match);
-            return dbResult;
-        } catch (err) {
-            console.log(err);
-            return { status: 500, result: err };
-        }  
+    static async GetMatchById(id) {
+        try {
+            //!This function will never be used directly by the player
+            db = client.collection("match")
+            let dbResult = await db.find({ "_id": id}).toArray();
+            if(!dbResult.length){
+                return {status: 400, result: {
+                    msg:"server not found"
+                }}
+            };
+            return {status: 200, result: dbResult[0]}
+            } catch (err) {
+                console.log(err);
+                return { status: 500, result: { msg: "Internal server error" }};
+            } 
     }
     static async GetAllMatches() {
         try {
@@ -144,8 +151,25 @@ class Match{
                 console.log(err);
                 return { status: 500, result: { msg: "Internal server error" }};
             } 
-        }
-
+    }
+    static async closeMatch(matchID) {
+        try {
+            //!vOnly servers can close
+            let db = client.collection("match");
+            let dbResult = await db.find({ _id: matchID}).toArray();
+            if(!dbResult.length){
+                return {status: 400, result: {
+                    msg:"match not found"
+                }}
+            };
+            let full_ip={ip:unity_server.settings.ip, port:unity_server.settings.port};
+            let response = await Slave.CloseServer(full_ip);
+            return {status: 200, result: full_ip}
+            } catch (err) {
+                console.log(err);
+                return { status: 500, result: { msg: "Internal server error" }};
+            } 
+    }
 
 }
 module.exports = Match;

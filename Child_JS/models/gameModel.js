@@ -1,7 +1,6 @@
 var Docker = require('dockerode');
 const fs = require('fs');
 const yaml = require('js-yaml');
-const path = require('path');
 const { exec } = require('child_process');
 
 //! PORT RANGE 27000-27100
@@ -23,7 +22,7 @@ try {
     console.error('Error parsing YAML:', error);
   }
 
-
+//!!! NOT THE BEST WAY OF RUNNING COMMANDS, because is sending mensages throw the stderr but does it succsesfully
 class Game {
     static async start_game(id) {
         try {
@@ -47,18 +46,19 @@ class Game {
             let port = service.config.ports[0];
             port = port.split(":")[0];
             let composeCommand = 'GAME_ID='+id+' docker compose -f '+fullcomposeFilePath+' up -d '+service.name;
-            exec(composeCommand, (error, stdout, stderr) => {
-                if (error) {
-                  console.error(`Error: ${error}`);
-                  return { status: 500, result: { msg: "Internal server error" }};
-                }  else if (stdout.includes("Started Successfully")) {
-                    return { status: 200, result: { 
-                            msg: "Started server" ,
-                            ports:port}};
-                  } else {
-                    return { status: 500, result: { msg: "Error Creating container" }};
-                }
-            });
+            const { stderr, stdout } = await executeCommand(composeCommand); 
+            if (stderr.includes("Started")) {
+                return {
+                    status: 200,
+                    result: {
+                        msg: "Started server",
+                        ports: port,
+                    },
+                };
+            } else {
+                console.error(`Error: ${stderr}`);
+                return { status: 500, result: { msg: "Error Creating container" } };
+            }
 
             //up the service
             //return true with the port 
@@ -70,34 +70,30 @@ class Game {
     }
     static async close_game(port){
         try {
-            let close_game = null; 
+            let closeGame = null; 
             let containers = await docker.listContainers({ all: true });
-                for(let container of containers){                   
-                        if(port == container.Ports){
-                            close_game = container.Image;
-                        }                    
-                    }
-            if(!close_game)
-                return{status: 507, result: {msg:"unable to find container"}}
-            let composeCommand = ' docker compose -f '+close_game+' down ';
-            exec(composeCommand, (error, stdout, stderr) => {
-                if (error) {
-                  console.error(`Error: ${error}`);
-                  return { status: 500, result: { msg: "Internal server error" }};
-                }  else if (stdout.includes("Started Successfully")) {
-                    return { status: 200, result: { 
-                            msg: "Started server" ,
-                            ports:port}};
-                  } else {
-                    return { status: 500, result: { msg: "Error Creating container" }};
+            for(let container of containers){                 
+                    if(port == container.Ports[1].PublicPort){
+                        closeGame = container.Image;
+                        break;
+                    }                    
                 }
-            });
-
-
-            //search on the opened container for a contianer in that port
-            //docker compose down *nome do container*
-            //return true
-            
+            closeGame = closeGame.split("-")[1];
+            if(!closeGame)
+                return{status: 507, result: {msg:"unable to find container"}}
+            let composeCommand = ' docker compose -f '+fullcomposeFilePath+' down '+closeGame;
+            const { stderr, stdout } = await executeCommand(composeCommand); 
+            if (stderr.includes("Removed")) {
+                return {
+                    status: 200,
+                    result: {
+                        msg: "Server closed successfully"
+                    },
+                };
+            } else {
+                console.error(`Error: ${stderr}`);
+                return { status: 500, result: { msg: "Error Creating container" } };
+            }
         } catch (err) {
             console.log(err);
             return { status: 500, result: { msg: "Internal server error" }};
@@ -105,5 +101,16 @@ class Game {
     }
 
 
+}
+async function executeCommand(command) {
+    return new Promise((resolve, reject) => {
+        const child = exec(command, (error, stdout, stderr) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve({ stdout, stderr});
+            }
+        });
+    });
 }
 module.exports = Game;

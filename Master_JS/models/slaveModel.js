@@ -53,21 +53,16 @@ class Slave {
         }  
     }
 
-    static async CloseServer(Match_id){
+    static async CloseServer(ip){
         try{
             let collection = client.collection("slave");
-            let slave = await collection.aggregate([
-                {$sort: { n_unityServers: 1 }},{$limit: 1}]).toArray();
+            let slave = await collection.findOne({ip:ip.ip}).toArray();
             if(!slave.length)
                 return {status:404, results:{msg:"No Servers Found"}}
 
-            slave = slave[0];
-
-            let url = "http://"+slave.ip+":"+process.env.SLAVEPORT+`/api/game/close/${Match_id}`;
-            
+            let url = "http://"+ip.ip+":"+process.env.SLAVEPORT+`/api/game/close/${ip.port}`;
             let response = await axios.delete(url);
-            let server = {ip:slave.ip,port:response.data.ports}
-
+            console.log(response);
             return {status: 200, result: {server}}
         }catch(err){
             console.log(err);
