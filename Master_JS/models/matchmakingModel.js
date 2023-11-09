@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const auth = require("../config/utils");
 const db = require("../config/database");
+const match = require("./matchModel");
 const client = db.getdatabase();
 const saltRounds = 10; 
 
@@ -34,7 +35,7 @@ class Marchmaking {
     constructor() {
 
     }
-    static async SearchServer(user) {
+    static async SearchServer() {
         try {
             var server;
             let results = await client.collection("match")
@@ -46,36 +47,27 @@ class Marchmaking {
                     if(unity_server.players.length < unity_server.settings.max_players){
                         server = result;
                         break;
+                    }
                 }
             }
-            }
             if(!server){
-                server = this.CreateServer();
+                let settings= {
+                max_players: 4,
+                games_pool: [],
+                isPrivate: false,
+                game_name: "Official",
+                isOfficial: true,
+                };
+                server = await match.CreateUnityServer(settings);
+                //if(server.status != 200)
+                  //  return {status: 404, result: {msg:"Matchmaking not available at the moment"}}
             }
-            return server
-            this.ConnectServer(user,server);//trocar por só responder mas isso fica para dps 
+            let result_server = {ip:server.ip, port:server.port}
+            return {status: 200, result: {server:result_server}}
         } catch (err) {
             console.log(err);
             return { status: 500, result: { msg: "Internal server error" }};
         }
-    }
-
-
-    static async CreateServer() {
-        try {
-
-        } catch (err) {
-            console.log(err);
-            return { status: 500, result: { msg: "Internal server error" }};
-        }  
-    }
-    static async ConnectServer(user,server) {
-        try {
-
-        } catch (err) {
-            console.log(err);
-            return { status: 500, result: { msg: "Internal server error" }};
-        }  
     }
 
 }

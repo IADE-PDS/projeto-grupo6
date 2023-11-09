@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const db = require("../config/database");
 const client = db.getdatabase();
+const axios = require("axios");
 const password = process.env.REGISTATION_PASSWORD 
 
 class Slave {
@@ -13,11 +14,14 @@ class Slave {
         try {
             if(child.pass != password || !child.pass)
                 return {status: 401, result: {msg:"Not a valid server"}}
-            let insert_child = new Child();
+            let db = client.collection("slave");
+            let insert_child = new Slave();
             insert_child.ip = child.ip;
             insert_child.n_unityServers = 0;
-            let db = client.collection("child");
-            let dbResult = await db.insertOne(insert_child);
+            let dbResult = await db.findOne({ip:child.ip});
+            if(dbResult)
+                return{status: 200, result: {msg:"Already Registered"}}
+            dbResult = await db.insertOne(insert_child);
             //register slave
             return{status: 200, result: {msg:"Registered sucsessfully"}}
         } catch (err) {
@@ -25,33 +29,40 @@ class Slave {
             return {status: 500, result: { msg: "Internal server error" }};
         }  
     }
-    static async CreateServer(settings) {
+    static async CreateServer(Match_id) {
         try {
-            //recieves the settings 
-            //chooses from the database a slave to create the server on
+            let collection = client.collection("slave");
+            let slave = await collection.aggregate([
+                {$sort: { n_unityServers: 1 }},{$limit: 1}]).toArray();
+            if(!slave.length)
+                return {status: 404, result: {msg:"No Servers Found"}}
+            slave = slave[0];
+            let postData = {
+                id:Match_id
+            }
+            let url = "http://"+slave.ip+":"+process.env.SLAVEPORT+"/api/game/start"
+            let response = await axios.post(url, postData);
+            let server = {ip:slave.ip,port:response.data.ports}
             //sends an http request to the slave to create the slave
-            //if successfull send back the ip and port opened
+            //send back the slave.ip and the port that comes from the http request
+            //if successfull  send back the ip and port opened
+            return {status: 200, result: {ip:slave.ip,port:response.data.ports}}
         } catch (err) {
             console.log(err);
             return { status: 500, result: { msg: "Internal server error" }};
         }  
     }
 
-    static async CloseServer(Match_id){
+    static async CloseServer(ip){
         try{
             let collection = client.collection("slave");
-            let slave = await collection.aggregate([
-                {$sort: { n_unityServers: 1 }},{$limit: 1}]).toArray();
+            let slave = await collection.findOne({ip:ip.ip}).toArray();
             if(!slave.length)
                 return {status:404, results:{msg:"No Servers Found"}}
 
-            slave = slave[0];
-
-            let url = "http://"+slave.ip+":"+process.env.SLAVEPORT+`/api/game/close/${Match_id}`;
-            
+            let url = "http://"+ip.ip+":"+process.env.SLAVEPORT+`/api/game/close/${ip.port}`;
             let response = await axios.delete(url);
-            let server = {ip:slave.ip,port:response.data.ports}
-
+            console.log(response);
             return {status: 200, result: {server}}
         }catch(err){
             console.log(err);
