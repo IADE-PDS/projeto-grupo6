@@ -52,6 +52,29 @@ class Slave {
             return { status: 500, result: { msg: "Internal server error" }};
         }  
     }
+
+    static async CloseServer(Match_id){
+        try{
+            let collection = client.collection("slave");
+            let slave = await collection.aggregate([
+                {$sort: { n_unityServers: 1 }},{$limit: 1}]).toArray();
+            if(!slave.length)
+                return {status:404, results:{msg:"No Servers Found"}}
+
+            slave = slave[0];
+
+            let url = "http://"+slave.ip+":"+process.env.SLAVEPORT+`/api/game/close/${Match_id}`;
+            
+            let response = await axios.delete(url);
+            let server = {ip:slave.ip,port:response.data.ports}
+
+            return {status: 200, result: {server}}
+        }catch(err){
+            console.log(err);
+            return{status:500, result:{msg: "Internal server error"}};
+            
+        }
+    }
 }
 
 module.exports = Slave;
