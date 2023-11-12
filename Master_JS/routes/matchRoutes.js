@@ -28,6 +28,15 @@ router.patch('/update', async function (req, res, next) {
         //! verify if the server password is correct
         //get updated information from a unity server
         //call app to save it
+        console.log("Attempting to update server");
+        let result = await matchModel.UpdateServer(req.body);
+        if (result.status != 200)
+            res.status(result.status).send(result.result);
+        else {
+            let routes = result.result.map((rt)=> rt.export());
+            res.status(200).send(routes);
+            console.log(routes);
+        }
     } catch (err) {
         console.log(err);
         res.status(500).send("Internal server error");
