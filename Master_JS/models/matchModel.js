@@ -201,8 +201,8 @@ class Match{
             };
 
             let updates = reqBody.updates
-            let newGames = updates.filter(x => dbResult.games.includes(x))
-            let newLog = updates.filter(x => dbResult.log.includes(x))
+            let newGames = updates.filter(x => !dbResult.games.includes(x))
+            let newLog = updates.filter(x => !dbResult.log.includes(x))
             updates.games = newGames
             updates.log = newLog
             dbResult = await db.updateOne({_id: id},
