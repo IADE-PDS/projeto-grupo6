@@ -4,7 +4,7 @@ const db = require("../config/database");
 const client = db.getdatabase();
 const Slave = require("./slaveModel");
 
-
+//! DELETE THIS
 function dbMatchtoMatch(dbr)  {
     return new Match(dbr.server_unity_id, dbr.players, dbr.games, dbr.log, dbr.settings.max_players,
         dbr.settings.games_pool ,dbr.settings.isPrivate, dbr.settings.game_name, dbr.settings.isOfficial, dbr.settings.port,
@@ -13,11 +13,11 @@ function dbMatchtoMatch(dbr)  {
 
 class Match{
     constructor( players, games, log, max_players, games_pool,//! INFORMAÇÔES DO JOGO ATUAL,INFORMAÇÔES,INFORMAÇÔES UNIVERSAIS DO PLAYER
-        isPrivate, game_name,isOfficial, port, ip, status){
+        isPrivate, game_name,isOfficial, port, ip, status){//! missing owner
         this.players = players;
         this.games = games;
         this.log = log;
-        this.settings= {//! tipos de servidores 
+        this.settings= {//! tipos de servidores, pin, whitelist para matchmaking, tempo maximo de partida, partidas maximas 
             max_players: max_players,
             games_pool: games_pool,
             isPrivate: isPrivate,
@@ -28,8 +28,9 @@ class Match{
             status: status,
         };
     };
-
-
+    /*
+   
+    */
     static async GetMatchById(id) {
         try {
             //!This function will never be used directly by the player

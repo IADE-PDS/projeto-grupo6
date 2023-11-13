@@ -4,6 +4,7 @@ const axios = require('axios');
 
 module.exports.register = async function() {
     try {
+      //! não mandar o ip o master é que vai buscar o ip ao request
       const response = await axios.post(process.env.MAIN_SERVER+'api/slave/register', {
         ip: networkInterfaces.Ethernet[3].address,
         pass:process.env.MAIN_SERVER_PASSWORD

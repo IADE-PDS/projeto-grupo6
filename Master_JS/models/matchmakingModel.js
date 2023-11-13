@@ -37,6 +37,7 @@ class Marchmaking {
     }
     static async SearchServer() {
         try {
+            //! PARA FAZER QUANDO TIVER LOGIN È ADICIONAR O PLAYER À WHITELIST
             var server;
             let collection = client.collection("match")
             let results = await collection.find({

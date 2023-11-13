@@ -28,8 +28,7 @@ class Game {
                     if(name == service.name){
                         tempServices.splice(i,1);
                         break;
-                    }    
-                               
+                    }     
                 }
             }
             if(!tempServices.length)
