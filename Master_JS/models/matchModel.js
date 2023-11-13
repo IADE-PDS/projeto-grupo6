@@ -47,10 +47,11 @@ class Match{
                 return { status: 500, result: { msg: "Internal server error" }};
             } 
     }
+
     static async GetAllMatches() {
         try {
-            let matches= [];
-            let results= await client.collection("match")
+            let matches = [];
+            let results = await client.collection("match")
                 .find({"settings.isPrivate": false,
                        "settings.isOfficial": false,
                        "settings.status": "waiting"})
@@ -74,6 +75,7 @@ class Match{
             return { status: 500, result: err };
         }  
     }
+
     static async CreateUnityServer(settings) {
         try {
             let db = client.collection("match")
@@ -118,6 +120,7 @@ class Match{
             return { status: 500, result: { msg: "Internal server error" }};
         }  
     }
+
     static async JoinCommunityLobby(code) {
         try {
             //!verify if players is not in a lobby already
@@ -150,6 +153,7 @@ class Match{
                 return { status: 500, result: { msg: "Internal server error" }};
             } 
     }
+
     static async closeMatch(matchID) {
         try {
             //!vOnly servers can close
@@ -169,5 +173,52 @@ class Match{
             } 
     }
 
+    static parseUpdates(updateTable) {
+        let fixedUpdates = []
+        if (updateTable.players.length) {
+            fixedUpdates.players = updateTable.players
+        }
+        if (updateTable.games.length) {
+            fixedUpdates.games = updateTable.games
+        }
+        if (updateTable.log.length) {
+            fixedUpdates.log = updateTable.log
+        }
+        if (updateTable.settings.length) {
+            fixedUpdates.settings = updateTable.settings
+        }
+        return fixedUpdates
+    }
+
+    static async UpdateServer(reqBody) {
+        try {
+            let db = client.collection("match")
+
+            let dbResult = await db.findOne({"_id": reqBody.id}).toArray();
+            if(!dbResult.length){
+                return {status: 400, result: {
+                    msg:"Server with given ID does not exist, or could not contact database."
+                }}
+            };
+
+            let updates = reqBody.updates
+            let newGames = updates.filter(x => !dbResult.games.includes(x))
+            let newLog = updates.filter(x => !dbResult.log.includes(x))
+            updates.games = newGames
+            updates.log = newLog
+            dbResult = await db.updateOne({_id: id},
+                        {
+                            $set: parseUpdates(updates)
+                        });
+
+            return {status: 200, result: {
+                msg:"Server updated successfully",
+                ip:result.result.ip, port: result.result.port
+            }}
+        } catch (err) {
+            console.log(err);
+            return { status: 500, result: { msg: "Internal server error" }};
+        } 
+    }
 }
 module.exports = Match;
