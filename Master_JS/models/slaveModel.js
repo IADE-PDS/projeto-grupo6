@@ -10,15 +10,16 @@ class Slave {
         this.n_unityServers = n_unityServers;
     }
 
-    static async RegisterChild(child) {
+    static async RegisterChild(child,ip) {
         try {
             if(child.pass != password || !child.pass)
                 return {status: 401, result: {msg:"Not a valid server"}}
             let db = client.collection("slave");
+            console.log(child);
             let insert_child = new Slave();
-            insert_child.ip = child.ip;
+            insert_child.ip = ip;
             insert_child.n_unityServers = 0;
-            let dbResult = await db.findOne({ip:child.ip});
+            let dbResult = await db.findOne({ip:ip});
             if(dbResult)
                 return{status: 200, result: {msg:"Already Registered"}}
             dbResult = await db.insertOne(insert_child);
@@ -29,6 +30,7 @@ class Slave {
             return {status: 500, result: { msg: "Internal server error" }};
         }  
     }
+    
     static async CreateServer(Match_id) {
         try {
             let collection = client.collection("slave");
@@ -42,9 +44,6 @@ class Slave {
             }
             let url = "http://"+slave.ip+":"+process.env.SLAVEPORT+"/api/game/start"
             let response = await axios.post(url, postData);
-            //sends an http request to the slave to create the slave
-            //send back the slave.ip and the port that comes from the http request
-            //if successfull  send back the ip and port opened
             return {status: 200, result: {ip:slave.ip,port:response.data.ports}}
         } catch (err) {
             console.log(err);

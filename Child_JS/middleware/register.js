@@ -6,7 +6,6 @@ module.exports.register = async function() {
     try {
       //! não mandar o ip o master é que vai buscar o ip ao request
       const response = await axios.post(process.env.MAIN_SERVER+'api/slave/register', {
-        ip: networkInterfaces.Ethernet[3].address,
         pass:process.env.MAIN_SERVER_PASSWORD
       });
       // If the status is not 200, call register again after a delay
@@ -21,6 +20,7 @@ module.exports.register = async function() {
         if(error.response)
             console.error('Error during registration:', error.response.data.msg);
         console.error('Retrying registration...');
+        console.log(error);
         await new Promise(resolve => setTimeout(resolve, 5000));
         await module.exports.register();
     }

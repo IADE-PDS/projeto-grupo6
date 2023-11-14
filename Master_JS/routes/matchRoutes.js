@@ -45,10 +45,21 @@ router.patch('/update', async function (req, res, next) {
 router.get('/matchmaking', async function (req, res, next) {
     try {
         let result = await matchmaking.SearchServer();
+        res.status(result.status).send(result.result.server);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Internal server error");
+    }
+});
+router.delete('/server', async function (req, res, next) {
+    try {
+        let result = await matchModel.closeMatch(req.body.id);
         res.status(result.status).send(result.result);
     } catch (err) {
         console.log(err);
         res.status(500).send("Internal server error");
     }
 });
+
+
 module.exports = router;

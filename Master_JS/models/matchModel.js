@@ -4,33 +4,30 @@ const db = require("../config/database");
 const client = db.getdatabase();
 const Slave = require("./slaveModel");
 
-//! DELETE THIS
-function dbMatchtoMatch(dbr)  {
-    return new Match(dbr.server_unity_id, dbr.players, dbr.games, dbr.log, dbr.settings.max_players,
-        dbr.settings.games_pool ,dbr.settings.isPrivate, dbr.settings.game_name, dbr.settings.isOfficial, dbr.settings.port,
-        dbr.settings.slave_id, dbr.settings.status);
-}
-
 class Match{
     constructor( players, games, log, max_players, games_pool,//! INFORMAÇÔES DO JOGO ATUAL,INFORMAÇÔES,INFORMAÇÔES UNIVERSAIS DO PLAYER
-        isPrivate, game_name,isOfficial, port, ip, status){//! missing owner
-        this.players = players;
-        this.games = games;
-        this.log = log;
-        this.settings= {//! tipos de servidores, pin, whitelist para matchmaking, tempo maximo de partida, partidas maximas 
-            max_players: max_players,
-            games_pool: games_pool,
-            isPrivate: isPrivate,
-            game_name: game_name,
-            isOfficial: isOfficial,
-            port: port,
-            ip:ip,
-            status: status,
+        isPrivate, game_name,isOfficial, port, ip, status){
+        this.owner = owner;//for custom matches, for the owner to be able to change options on the server 
+        this.players = players;//Players on the server right now
+        this.games = games;//Games played on the server untill now, and the information associated with each game and each player
+        this.log = log;//server log
+        this.settings= {
+            type:type,// for custom servers the type is we
+            whitelist:whitelist,//for matchmaking servers, the player when wants to join a matchmaking server will be added to the whitelist and then it will join
+            max_time_round:max_time_round,//mach ammount of time allowed by round
+            max_rounds:max_rounds,//max rounds
+            max_players: max_players,//max players
+            games_pool: games_pool,// games allowed to be played
+            isPrivate: isPrivate,//if the server is private, private games dont have a whitelist, they simply will not show on the server list
+            game_name: game_name,//server name
+            isOfficial: isOfficial,//if the server is official
+            pin:pin,//4 digit pin to allow players to join without looking in the server list, or to join private games
+            port: port,//port of the server
+            ip:ip,//ip of the servers
+            status: status,//status, waiting(waiting players), started, finished
         };
     };
-    /*
-   
-    */
+    
     static async GetMatchById(id) {
         try {
             //!This function will never be used directly by the player
@@ -76,9 +73,20 @@ class Match{
         }  
     }
 
+
+    static generatePin(id){
+        console.log(id);
+        let result = "";
+        for (let i = 0; i < 4; i++) {
+            let randomIndex = Math.floor(Math.random() * id.length);
+            result += id.charAt(randomIndex);
+          }
+        return result
+    }
     static async CreateUnityServer(settings) {
         try {
             let db = client.collection("match")
+
             //! Verify if every settings exist and are set correctly
             //if no name then cant create
             //if server created successfully
@@ -89,22 +97,36 @@ class Match{
             insert_match.players = [];
             insert_match.games = [];
             insert_match.log = [];
-            settings.ip = undefined;
-            settings.port = undefined;
             insert_match.settings = settings;
 
             let dbResult = await db.insertOne(insert_match);
-
             let result = await Slave.CreateServer(dbResult.insertedId);
-            //await db.deleteOne({_id: dbResult.insertedId});
             if(result.status != 200){
                 await db.deleteOne({_id: dbResult.insertedId});
                 return {status: result.status, result: {msg:"something went wrong"}}
             }
             let id = dbResult.insertedId
+            //generates pin
+            let pin;
+            if(!settings.isOfficial)
+            {
+                while(true){
+                    pin = this.generatePin(id.toHexString())
+                    console.log(pin);
+                    let dbResult = await db.find({ "settings.pin": pin}).toArray();
+                    if(!dbResult.length){
+                        dbResult = await db.updateOne({_id: id},
+                            {
+                                $set: {
+                                    "settings.pin": pin,                                }
+                            });
+                        break;
+                    }
+                }
+            };
             dbResult = await db.updateOne({_id: id},
                         {
-                            $set: { 
+                            $set: {
                                 "settings.ip": result.result.ip,
                                 "settings.port":result.result.port
                             }
@@ -156,7 +178,7 @@ class Match{
 
     static async closeMatch(matchID) {
         try {
-            //!vOnly servers can close
+            //!only servers can close
             let db = client.collection("match");
             let dbResult = await db.find({ _id: matchID}).toArray();
             if(!dbResult.length){
@@ -190,6 +212,8 @@ class Match{
         return fixedUpdates
     }
 
+
+    //! NEEDS TO BE TESTED WHEN MINIGAMES ARE DONE
     static async UpdateServer(reqBody) {
         try {
             let db = client.collection("match")
@@ -200,7 +224,6 @@ class Match{
                     msg:"Server with given ID does not exist, or could not contact database."
                 }}
             };
-
             let updates = reqBody.updates
             let newGames = updates.filter(x => !dbResult.games.includes(x))
             let newLog = updates.filter(x => !dbResult.log.includes(x))
