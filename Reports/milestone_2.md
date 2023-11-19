@@ -235,14 +235,14 @@ O criador do lobby terá que preencher as informações do mesmo como nome, limi
 |---|
 |Login do utilizador|
 |/api/users/auth (**GET**)|
-|Sucesso(200): “User Registered”|
+|Sucesso(200): “Loged in successfully”|
 |Erros (500): “Internal server error”, (422): “Bad Data”, (401): “Email or password incorrect”|
 
 |Salvar token|
 |---|
 |Salva a sessão atual do utilizador|
 |/api/users (**PUT**)|
-|Sucesso(200): “User Registered”|
+|Sucesso(200): “Token saved!”|
 |Erros (500): “Internal server error”|
 
 #### Recurso Slaves
@@ -264,7 +264,7 @@ O criador do lobby terá que preencher as informações do mesmo como nome, limi
 |Fechar servidor|
 |---|
 |Elimina um servidor|
-|api/slave (**DELETE**)|
+|api/slave/delete (**DELETE**)|
 |Sucesso(200): |
 |Error(500):”Internal server error”, (404): “No Servers Found”|
 
@@ -273,7 +273,7 @@ O criador do lobby terá que preencher as informações do mesmo como nome, limi
 |Pesquisar Servidor|
 |---|
 |Pesquisa um servidor oficial|
-|api/slave (**GET**)|
+|api/match/matchmaking (**GET**)|
 |Sucesso(200): IP do servidor e porta|
 |Error(500): “Internal Server Error” (404): “Matchmaking not available at the moment”|
 
@@ -302,7 +302,7 @@ O criador do lobby terá que preencher as informações do mesmo como nome, limi
 |---|
 |api/match/update (**PATCH**)|
 |Sucesso(200): Devolve o ip e porta do servidor e “Server updated successfully”|
-|Error (500): “Internal server error”|
+|Error (500): “Internal server error”, (400): "Server with given ID does not exist, or could not contact database."|
 
 |Fecha um servidor de unity|
 |---|
