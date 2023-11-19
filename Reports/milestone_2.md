@@ -220,6 +220,50 @@ O jogador ao entrar pela primeira vez no MiniGamerino, terá que  registar-se co
 ### 3º Cenário: Criar um lobby
 O criador do lobby terá que preencher as informações do mesmo como nome, limitar o número de jogadores, privar ou não o lobby, se o privar será lhe disponibilizado um código para dar aos outros jogadores. Após o preenchimento poderá criar o lobby.
 
+## Tecnologias Utilizadas:
+
+* Unity
+* Visual Studio Code 
+* Visual Studio Basic 
+* Postman 
+* VMBox 
+* NGINX
+* Docker
+* MongoDB
+* Figma
+* NodeJS
+* GitHub
+* ArduinoIDE
+* ApacheBench
+* 
+#### Resumo
+Para realizar o jogo vamos utilizar o Unity pois inclui uma variedade de bibliotecas e assets úteis para programar o MiniGamerino, na parte dos scripts do mesmo, realizaremos no Visual Studio Code. A ferramenta para testar os pedidos da API vai ser o Postman, pela sua simplicidade. 
+Para construir a nossa rede de diversas máquinas vamos usar o VirtualBox, onde teremos cerca de nove máquinas a correr, todas elas com Ubuntu Server 22.04. Dentro dessas máquinas virtuais, teremos o Nginx, um load balancer e reverse proxy que será responsável pela distribuição de pedidos entre os servidores. O Docker, para inicializar os servidores Unity que estarão dentro do servidor Slave. MongoDB, a nossa base de dados não relacional, a razão desta ser escolhida é pelo facto de se estar a tornar uma tendência no mercado. Figma, para idealizar os mockups que depois serão compostos no Unity. NodeJs, utilizada para a construção da API. GitHub para controlo de versões do código. ArduinoIDE para codificar a parte de Arduino do MiniGamerino.
+
+### Linguagens programação
+* JavaScript ⇒ API
+* MongoScript⇒ MongoDB
+* C#⇒ Unity
+* C/C++ ⇒ ArduinoIDE
+
+### Ferramentas:
+#### Nove máquinas virtuais:
+    Dois servidores Matchmaking
+    Dois servidores slave
+    Um monitor
+    Um Nginx
+    Três base de dados
+
+#### Arduino
+    Quatro Motores ⇒ Locomoção dos carros.
+    Liquid crystal display ⇒ Indicar o código da partida
+    Elástico ⇒ Para prender os carros.
+
+### Planeamento dos testes
+* Testes de carga ⇒ Testar a capacidade dos servidores utilizando ApacheBench
+* Beta-testing⇒ Teste dos mini jogos
+* Testes unitários⇒ Testes ao código API
+
 ## Documentação REST
 ### Documentação REST Master
 
@@ -348,8 +392,21 @@ O criador do lobby terá que preencher as informações do mesmo como nome, limi
 
 ## Modelo do Domínio
 
-
 <img src="https://cdn.discordapp.com/attachments/1151160969209327646/1160250472314191882/image.png?ex=6533fa75&is=65218575&hm=937df074944a16c4a86a650591838a8ee31727373b2f86403e595898ebd2e535&" width="700" height="400" />
+
+## Distribuição de Tarefas
+
+Duarte:
+Menus unity, rig stickman e servidor
+
+Mariana:
+Menus unity, replicação da BD, NGINX, documentação, servidor
+
+Marco:
+Unity game, conexão jogo/servidores, documentação, servidor
+
+Francisco:
+Servidor,  conexão jogo/servidores, BD, dockers
 
 ## Plano de Produção
 
