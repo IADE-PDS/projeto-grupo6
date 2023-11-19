@@ -2,15 +2,15 @@
 
 
 # Projeto Desenvolvimento Software
-### Docente André Sabino
+#### Docente André Sabino
 
 # MiniGamerino
-### 17/09/2023
+### 19/11/2023
 
-1. #### Duarte Cavaleiro nº20211026
-2. #### Francisco Santos nº20211206
-3. #### Marco Camargo nº20211019
-4. #### Mariana Gonçalves nº20210539
+1. ### Duarte Cavaleiro nº20211026
+2. ### Francisco Santos nº20211206
+3. ### Marco Camargo nº20211019
+4. ### Mariana Gonçalves nº20210539
 
 # MiniGamerino
 
@@ -120,7 +120,20 @@ Esta tabela também terá o ID da Match associada. Este também será replicado.
 <img src="https://cdn.discordapp.com/attachments/1134884450891731086/1170695059784601630/image.png?ex=6559f9bc&is=654784bc&hm=d9b3836627e8b9e363d41489d919af3af6c7decaa23dbc47aef68412f2ab06a0&"/>
 
 ### Matchmaking Server
-Este verifica se existe uma partida para o jogador que quer jogar, se não houver cria uma.
+Este verifica se existe uma partida para o jogador que quer jogar, se não houver cria uma. Verifica se existe um lobby que não esteja cheio, para o jogador se juntar. 
+
+### Organização das máquinas com IPS estáticos
+
+* Base de dados (192.168.2.21-29)
+* Server Slave (192.168.2.32-39)
+* Main Server (192.168.2.11-19)
+* Load Balancer (192.168.2.1)
+
+O Load Balancer tem um adaptador Bridged para comunicar com o exterior, e tem outro adaptador interno para falar com as máquinas restantes, assim para para conseguirem fazer atualizações no sistema, como por exemplo instalar os pacotes como MongoDB, NodeJS...
+
+Os jogadores precisam de ser conectados diretamente ao servidores de Unity que estão nos Slaves, por isso, necessita conecção com o exterior.
+
+<img src="https://cdn.discordapp.com/attachments/1134884450891731086/1175761807055536228/image.png?ex=656c6883&is=6559f383&hm=7ad3246d11dabf229c7b3efb73aa99d091a6566ca8683f7e5ae237103e37ccce&"/>
 
 ---
 ## Personas
@@ -206,7 +219,110 @@ O jogador ao entrar pela primeira vez no MiniGamerino, terá que  registar-se co
 
 ### 3º Cenário: Criar um lobby
 O criador do lobby terá que preencher as informações do mesmo como nome, limitar o número de jogadores, privar ou não o lobby, se o privar será lhe disponibilizado um código para dar aos outros jogadores. Após o preenchimento poderá criar o lobby.
- 
+
+## Documentação REST
+### Documentação REST Master
+
+#### Recurso Users 
+|Registo de utilizador|
+|---|
+|Criar utilizador com email e palavra-passe|
+|/api/users (**POST**)|
+|Sucesso(200): “User Registered”|
+|Erros (500): “Internal server error”, (422): “Bad Data”, (400): “That email is already registered”|
+
+|Login de utilizador|
+|---|
+|Login do utilizador|
+|/api/users/auth (**GET**)|
+|Sucesso(200): “User Registered”|
+|Erros (500): “Internal server error”, (422): “Bad Data”, (401): “Email or password incorrect”|
+
+|Salvar token|
+|---|
+|Salva a sessão atual do utilizador|
+|/api/users (**PUT**)|
+|Sucesso(200): “User Registered”|
+|Erros (500): “Internal server error”|
+
+#### Recurso Slaves
+
+|Registar um Slave|
+|---|
+|Regista um slave|
+|/api/slave/register (**POST**)|
+|Sucesso(200): “Registered successfully”|
+|Erros (500): “Internal server error”, (401): “Not a valid server”, (400): “Already registered”|
+
+|Criar um servidor|
+|---|
+|Cria um servidor|
+|/api/slave (**POST**)|
+|Sucesso(200): Retorna ip do slave e a porta do jogo|
+|Error(500): “Internal server error”, (404): “No Servers Found”|
+
+|Fechar servidor|
+|---|
+|Elimina um servidor|
+|api/slave (**DELETE**)|
+|Sucesso(200): |
+|Error(500):”Internal server error”, (404): “No Servers Found”|
+
+#### Recurso Matchmaking 
+
+|Pesquisar Servidor|
+|---|
+|Pesquisa um servidor oficial|
+|api/slave (**GET**)|
+|Sucesso(200): IP do servidor e porta|
+|Error(500): “Internal Server Error” (404): “Matchmaking not available at the moment”|
+
+#### Recursos Match
+
+|Pesquisa pela a Match pelo ID|
+|---|
+|api/match (**GET**)|
+|Sucesso(200): Devolve a match com o id|
+|Error (500): “Internal server error”, (400): “Server not Found”|
+
+|Pesquisa por todas as matches|
+|---|
+|Procura todas as matches que ainda não tenham começado|
+|api/match/all (**GET**)|
+|Sucesso(200): Devolve as matches que não começaram|
+|Error (500): “Internal server error”|
+
+|Cria um servidor de unity|
+|---|
+|api/match (**POST**)|
+|Sucesso(200): Devolve o ip e porta do servidor e “Unity Server created successfully”|
+|Error (500): “Internal server error”|
+
+|Atualiza um servidor de unity|
+|---|
+|api/match/update (**PATCH**)|
+|Sucesso(200): Devolve o ip e porta do servidor e “Server updated successfully”|
+|Error (500): “Internal server error”|
+
+|Fecha um servidor de unity|
+|---|
+|api/match/server (**DELETE**)|
+|Sucesso(200): Devolve o ip|
+|Error (500): “Internal server error”, (400): “Match Not Found”|
+
+### Documentação REST Slave
+|Começa Jogo|
+|---|
+|api/game/start (**POST**)|
+|Sucesso(200): “Started server” e a porta onde é iniciado.|
+|Error (500): “Internal server error”, “Error Creating container”|
+
+|Encerra Jogo|
+|---|
+|api/game/stop/[id] (**DELETE**)|
+|Sucesso(200): “Server closed successfully”|
+|Error (500): “Internal server error”, “Error Creating container” (507): “Unable to find container”|
+
 ## Requisitos Funcionais e Não Funcionais
 ### Requisitos Funcionais
 **RF** - Requisito Funcional
