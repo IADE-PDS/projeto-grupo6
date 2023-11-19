@@ -235,7 +235,7 @@ O criador do lobby terá que preencher as informações do mesmo como nome, limi
 * GitHub
 * ArduinoIDE
 * ApacheBench
-* 
+
 #### Resumo
 Para realizar o jogo vamos utilizar o Unity pois inclui uma variedade de bibliotecas e assets úteis para programar o MiniGamerino, na parte dos scripts do mesmo, realizaremos no Visual Studio Code. A ferramenta para testar os pedidos da API vai ser o Postman, pela sua simplicidade. 
 Para construir a nossa rede de diversas máquinas vamos usar o VirtualBox, onde teremos cerca de nove máquinas a correr, todas elas com Ubuntu Server 22.04. Dentro dessas máquinas virtuais, teremos o Nginx, um load balancer e reverse proxy que será responsável pela distribuição de pedidos entre os servidores. O Docker, para inicializar os servidores Unity que estarão dentro do servidor Slave. MongoDB, a nossa base de dados não relacional, a razão desta ser escolhida é pelo facto de se estar a tornar uma tendência no mercado. Figma, para idealizar os mockups que depois serão compostos no Unity. NodeJs, utilizada para a construção da API. GitHub para controlo de versões do código. ArduinoIDE para codificar a parte de Arduino do MiniGamerino.
