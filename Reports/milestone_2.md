@@ -296,7 +296,7 @@ Para construir a nossa rede de diversas máquinas vamos usar o VirtualBox, onde 
 |Regista um slave|
 |/api/slave/register (**POST**)|
 |Sucesso(200): “Registered successfully”|
-|Erros (500): “Internal server error”, (401): “Not a valid server”, (400): “Already registered”|
+|Erros (500): “Internal server error”, (401): “Not a valid server”, (200): “Already registered”|
 
 |Criar um servidor|
 |---|
