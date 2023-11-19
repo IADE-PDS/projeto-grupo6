@@ -33,6 +33,7 @@ class Slave {
     
     static async CreateServer(Match_id) {
         try {
+            //!Try another server if this one not 200!
             let collection = client.collection("slave");
             let slave = await collection.aggregate([
                 {$sort: { n_unityServers: 1 }},{$limit: 1}]).toArray();

@@ -44,16 +44,17 @@ class Marchmaking {
                 "settings.isOfficial": true,
                 "settings.status": "waiting"
             }).toArray();
+
             if(results.length){
                 for (let result of results){
                     //find first one that isnt on staring
-                    if(result.players.length < result.settings.max_players){
+                    if(result.players.length < 100 /*result.settings.max_players*/){
                         server = result;
                         break;
                     }
                 }
             }
-            if(!server || true){
+            if(!server){
                 server = {};
                 let settings= {
                 max_players: 4,

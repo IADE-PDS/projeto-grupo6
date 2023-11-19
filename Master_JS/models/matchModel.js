@@ -3,6 +3,7 @@ const auth = require("../config/utils");
 const db = require("../config/database");
 const client = db.getdatabase();
 const Slave = require("./slaveModel");
+const { ObjectId } = require('mongodb');
 
 class Match{
     constructor( players, games, log, max_players, games_pool,//! INFORMAÇÔES DO JOGO ATUAL,INFORMAÇÔES,INFORMAÇÔES UNIVERSAIS DO PLAYER
@@ -31,8 +32,9 @@ class Match{
     static async GetMatchById(id) {
         try {
             //!This function will never be used directly by the player
-            db = client.collection("match")
-            let dbResult = await db.find({ "_id": id}).toArray();
+            let db = client.collection("match")
+            let matchID = new ObjectId(id);
+            let dbResult = await db.find({ "_id": matchID}).toArray();
             if(!dbResult.length){
                 return {status: 400, result: {
                     msg:"server not found"
@@ -197,7 +199,7 @@ class Match{
 
     static parseUpdates(updateTable) {
         let fixedUpdates = []
-        if (updateTable.players.length) {
+        if (updateTable.player) {
             fixedUpdates.players = updateTable.players
         }
         if (updateTable.games.length) {
@@ -216,32 +218,45 @@ class Match{
     //! NEEDS TO BE TESTED WHEN MINIGAMES ARE DONE
     static async UpdateServer(reqBody) {
         try {
+            console.log(reqBody);
+            let id = new ObjectId(reqBody.matchId);
             let db = client.collection("match")
-
-            let dbResult = await db.findOne({"_id": reqBody.id}).toArray();
-            if(!dbResult.length){
+            let dbResult = await db.findOne({"_id": id});
+            if(!dbResult){
                 return {status: 400, result: {
                     msg:"Server with given ID does not exist, or could not contact database."
                 }}
             };
             let updates = reqBody.updates
-            let newGames = updates.filter(x => !dbResult.games.includes(x))
-            let newLog = updates.filter(x => !dbResult.log.includes(x))
-            updates.games = newGames
-            updates.log = newLog
+            let dbPlayers = dbResult.players;
+            let players = toggleElement(dbPlayers ,reqBody.updates.player);
             dbResult = await db.updateOne({_id: id},
                         {
-                            $set: parseUpdates(updates)
+                            $set: {players : players}
                         });
 
-            return {status: 200, result: {
+           
+
+            function toggleElement(arr, element) {
+                const index = arr.indexOf(element);
+                if (index !== -1) {
+                  arr.splice(index, 1);
+                } else {
+                  arr.push(element);
+                }
+              
+                return arr;
+              }
+              return {status: 200, result: {
                 msg:"Server updated successfully",
-                ip:result.result.ip, port: result.result.port
             }}
+
+
         } catch (err) {
             console.log(err);
             return { status: 500, result: { msg: "Internal server error" }};
         } 
     }
+    
 }
 module.exports = Match;
