@@ -83,7 +83,7 @@ class User {
                 user:{
                     email: user.email
                 },
-                msg:"Loged in successfully"
+                msg:"Logged in successfully"
             }}
         } catch (err) {
             console.log(err);
@@ -98,6 +98,19 @@ class User {
             let new_value = {$set:{token : user.token}}
             let dbResult = await db.updateOne(query, new_value);
             return { status: 200, result: {msg:"Token saved!"}};
+        }catch(err){
+            console.log(err);
+            return{status: 500, result: { msg: "Internal server error" }}
+        }
+    }
+    static async getUserByToken(token){
+        try{
+            let db = client.collection("user");
+            let dbResult = await db.find({ token: token}).toArray();
+            let user = dbResult[0];
+            if(!user)
+                return {status:404, results:{msg:"No User Found"}}
+            return { status: 200, result: {user:user}};
         }catch(err){
             console.log(err);
             return{status: 500, result: { msg: "Internal server error" }}

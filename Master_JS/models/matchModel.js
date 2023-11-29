@@ -181,16 +181,33 @@ class Match{
     static async closeMatch(matchID) {
         try {
             //!only servers can close
+            let id = new ObjectId(matchID);
             let db = client.collection("match");
-            let dbResult = await db.find({ _id: matchID}).toArray();
-            if(!dbResult.length){
+            let dbResult = await db.findOne({ _id: id});
+            if(!dbResult){
                 return {status: 400, result: {
                     msg:"match not found"
                 }}
             };
-            let full_ip={ip:unity_server.settings.ip, port:unity_server.settings.port};
+            let full_ip={ip:dbResult.settings.ip, port:dbResult.settings.port};
             let response = await Slave.CloseServer(full_ip);
-            return {status: 200, result: full_ip}
+            if(response.status != 200){
+                return { status: 500, result: { msg: "Internal server error" }};
+            }
+            if(!dbResult.settings.isOfficial || dbResult.settings.status != "finished"){//if server is not official or is official and the status isnt finished, we delete it
+                dbResult = await db.deleteOne({_id:id});//deletes from db
+            } else{
+                dbResult = await db.updateOne({_id: id},
+                    {
+                        $set: {"settings.status":"finished"}
+                    });
+                //! need to have authenthication
+                //for every player
+                //get all matches from the player
+                //if a player has more than 10 matches
+                //delete the oldest one
+            }
+            return {status: 200, result:{msg: "stopped server successfully"}}
             } catch (err) {
                 console.log(err);
                 return { status: 500, result: { msg: "Internal server error" }};

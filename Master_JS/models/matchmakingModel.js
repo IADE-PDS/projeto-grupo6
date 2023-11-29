@@ -69,9 +69,10 @@ class Marchmaking {
                     return {status: 404, result: {msg:"Matchmaking not available at the moment"}}
                 server.settings.ip = result.result.ip
                 server.settings.port = result.result.port
-
+                
             }
-            let result_server = {ip:server.settings.ip, port:server.settings.port}
+            let ip = process.env.GAMECONNECTIONIP || server.settings.ip;
+            let result_server = {ip: ip , port:server.settings.port}
             return {status: 200, result: {server:result_server}}
         } catch (err) {
             console.log(err);

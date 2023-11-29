@@ -6,7 +6,7 @@ const auth = require("../middleware/auth");
 const tokenSize = 64;
 
 
-
+//register
 router.post('', async function (req, res, next) {
     try {
         let user = req.body.user;
@@ -25,7 +25,8 @@ router.post('', async function (req, res, next) {
         res.status(500).send("Internal server error");
     }
 });
-router.get('/auth', async function (req, res, next) {
+//login
+router.get('/login', async function (req, res, next) {
     try {
        let result = await User.Login(req.body.user);
        if (result.status != 200) {
@@ -42,4 +43,14 @@ router.get('/auth', async function (req, res, next) {
         res.status(500).send("Internal server error");
     }
 });
+//authenthicate
+router.post('/auth',auth.verifyAuth, async function (req, res, next) {
+    try {
+        res.status(200).send({msg: "Logged in"});
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Internal server error");
+    }
+});
+
 module.exports = router;

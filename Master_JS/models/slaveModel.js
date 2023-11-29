@@ -55,14 +55,15 @@ class Slave {
     static async CloseServer(ip){
         try{
             let collection = client.collection("slave");
-            let slave = await collection.findOne({ip:ip.ip}).toArray();
-            if(!slave.length)
+            let slave = await collection.findOne({ip:ip.ip});
+            if(!slave)
                 return {status:404, results:{msg:"No Servers Found"}}
-
-            let url = "http://"+ip.ip+":"+process.env.SLAVEPORT+`/api/game/close/${ip.port}`;
+            let url = "http://"+ip.ip+":"+process.env.SLAVEPORT+`/api/game/stop/${ip.port}`;
             let response = await axios.delete(url);
-            console.log(response);
-            return {status: 200, result: {server}}
+            if(response.status != 200){
+                return{status:500, result:{msg: "Internal server error"}};
+            }
+            return {status: 200, result:{msg: "stopped server successfully"}}
         }catch(err){
             console.log(err);
             return{status:500, result:{msg: "Internal server error"}};

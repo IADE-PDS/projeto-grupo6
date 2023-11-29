@@ -69,7 +69,8 @@ router.patch('/update', async function (req, res, next) {
 
 router.delete('/server', async function (req, res, next) {
     try {
-        let result = await matchModel.closeMatch(req.body.id);
+        console.log("deleting");
+        let result = await matchModel.closeMatch(req.body.matchid);
         res.status(result.status).send(result.result);
     } catch (err) {
         console.log(err);
