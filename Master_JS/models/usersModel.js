@@ -81,7 +81,8 @@ class User {
                 }}
             return {status: 200, result: {
                 user:{
-                    email: user.email
+                    email: user.email,
+                    username: dbUser.username
                 },
                 msg:"Logged in successfully"
             }}
@@ -97,6 +98,7 @@ class User {
             let query = {email : user.email};
             let new_value = {$set:{token : user.token}}
             let dbResult = await db.updateOne(query, new_value);
+            console.log(user);
             return { status: 200, result: {msg:"Token saved!"}};
         }catch(err){
             console.log(err);

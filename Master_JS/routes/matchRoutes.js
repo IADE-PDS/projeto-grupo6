@@ -22,7 +22,7 @@ router.get('/all',  async function (req, res, next) {
         res.status(500).send(err);
     }
 });
-router.get('/matchmaking', async function (req, res, next) {
+router.get('/matchmaking',auth.verifyAuth, async function (req, res, next) {
     try {
         console.log("matchmaking");
         let result = await matchmaking.SearchServer();
@@ -32,7 +32,7 @@ router.get('/matchmaking', async function (req, res, next) {
         res.status(500).send("Internal server error");
     }
 });
-//get server by ip
+//get server by id
 router.get('/:matchid',  async function (req, res, next) {
     try {
         let result = await matchModel.GetMatchById(req.params.matchid);
