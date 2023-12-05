@@ -21,7 +21,7 @@ class Slave {
             insert_child.n_unityServers = 0;
             let dbResult = await db.findOne({ip:ip});
             if(dbResult)
-                return{status: 200, result: {msg:"Already Registered"}}
+                return{status: 409, result: {msg:"Already Registered"}}
             dbResult = await db.insertOne(insert_child);
             //register slave
             return{status: 200, result: {msg:"Registered sucsessfully"}}
