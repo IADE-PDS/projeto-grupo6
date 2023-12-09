@@ -21,7 +21,7 @@ class Slave {
             insert_child.n_unityServers = 0;
             let dbResult = await db.findOne({ip:ip});
             if(dbResult)
-                return{status: 200, result: {msg:"Already Registered"}}
+                return{status: 409, result: {msg:"Already Registered"}}
             dbResult = await db.insertOne(insert_child);
             //register slave
             return{status: 200, result: {msg:"Registered sucsessfully"}}
@@ -38,12 +38,12 @@ class Slave {
             let slave = await collection.aggregate([
                 {$sort: { n_unityServers: 1 }}]).toArray();
             while(slave.length){
-
+                
                 if(!slave.length)
                     return {status: 404, result: {msg:"No Servers Found"}}
                 slave = slave[0];
                 let postData = {
-                    token: token
+                    id:Match_id
                 }
                 let url = "http://"+slave.ip+":"+process.env.SLAVEPORT+"/api/game/start"
                 let response = await axios.post(url, postData);
@@ -52,7 +52,7 @@ class Slave {
                     return {status: 200, result: {ip:slave.ip,port:response.data.ports}}
                 slave.shift();
             }
-
+            
             return {status: 503, result: {msg:"No Servers Found"}}
         } catch (err) {
             console.log(err);
