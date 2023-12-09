@@ -31,27 +31,34 @@ class Slave {
         }  
     }
     
-    static async CreateServer(Match_id) {
+    static async CreateServer(token) {
         try {
             //!Try another server if this one not 200!
             let collection = client.collection("slave");
             let slave = await collection.aggregate([
-                {$sort: { n_unityServers: 1 }},{$limit: 1}]).toArray();
-            if(!slave.length)
-                return {status: 404, result: {msg:"No Servers Found"}}
-            slave = slave[0];
-            let postData = {
-                id:Match_id
+                {$sort: { n_unityServers: 1 }}]).toArray();
+            while(slave.length){
+
+                if(!slave.length)
+                    return {status: 404, result: {msg:"No Servers Found"}}
+                slave = slave[0];
+                let postData = {
+                    token: token
+                }
+                let url = "http://"+slave.ip+":"+process.env.SLAVEPORT+"/api/game/start"
+                let response = await axios.post(url, postData);
+
+                if(response.status == 200)
+                    return {status: 200, result: {ip:slave.ip,port:response.data.ports}}
+                slave.shift();
             }
-            let url = "http://"+slave.ip+":"+process.env.SLAVEPORT+"/api/game/start"
-            let response = await axios.post(url, postData);
-            return {status: 200, result: {ip:slave.ip,port:response.data.ports}}
+
+            return {status: 503, result: {msg:"No Servers Found"}}
         } catch (err) {
             console.log(err);
             return { status: 500, result: { msg: "Internal server error" }};
-        }  
+        }
     }
-
     static async CloseServer(ip){
         try{
             let collection = client.collection("slave");

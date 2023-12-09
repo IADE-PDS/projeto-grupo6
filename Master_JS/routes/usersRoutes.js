@@ -17,10 +17,12 @@ router.post('', async function (req, res, next) {
             res.status(result.status).send(result.result.msg);
             return;
         }
+        user.id = result.result.id;
+        console.log(user);
         let token = utils.genToken(tokenSize);
         user.token = token;
         result = await User.SaveToken(user);
-        res.status(result.status).send({msg: result.result.msg, token: token, username:user.username});
+        res.status(result.status).send({msg: result.result.msg, token: token, username:user.username, id:user.id});
     } catch (err) {
         console.log(err);
         res.status(500).send("Internal server error");
@@ -38,7 +40,7 @@ router.post('/login', async function (req, res, next) {
          let token = utils.genToken(tokenSize);
          user.token = token;
          let result1 = await User.SaveToken(user);
-         res.status(200).send({msg: "Successful Login!", token:token, username:result.result.user.username});
+         res.status(200).send({msg: "Successful Login!", token:token, username:result.result.user.username, id:result.result.user.id});
     } catch (err) {
         console.log(err);
         res.status(500).send("Internal server error");
@@ -56,7 +58,7 @@ router.post('/auth',auth.verifyAuth, async function (req, res, next) {
 router.delete('/auth',auth.verifyAuth, async function (req, res, next) {
     try {
         //remove the token from database
-        res.status(200).send({msg: "Loged out"});
+        res.status(200).send({msg: "Logged out"});
     } catch (err) {
         console.log(err);
         res.status(500).send("Internal server error");

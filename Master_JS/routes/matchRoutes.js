@@ -5,8 +5,8 @@ const matchmaking = require("../models/matchmakingModel")
 const utils = require("../config/utils");
 const auth = require("../middleware/auth");
 const tokenSize = 64;
-// /api/match
-router.get('/all',  async function (req, res, next) {
+//USER
+router.get('/all',auth.verifyAuth,  async function (req, res, next) {
     try {
         console.log("Get all lobbies");
         let result = await matchModel.GetAllMatches();
@@ -22,39 +22,44 @@ router.get('/all',  async function (req, res, next) {
         res.status(500).send(err);
     }
 });
+router.post('/authenthicateUser',auth.GameSerververifyAuth, async function (req, res, next) {
+    try {
+        let result = await matchModel.AuthethicatePlayer(req.body.id, req.match._id);
+        res.status(result.status).send(result.result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Internal server error");
+    }
+});
+
 router.get('/matchmaking',auth.verifyAuth, async function (req, res, next) {
     try {
         console.log("matchmaking");
-        let result = await matchmaking.SearchServer();
+        let result = await matchmaking.SearchServer(req.user.id);
         res.status(result.status).send(result.result.server);
     } catch (err) {
         console.log(err);
         res.status(500).send("Internal server error");
     }
 });
-//get server by id
-router.get('/:matchid',  async function (req, res, next) {
+
+//SERVER
+router.get('/',auth.GameSerververifyAuth, async function (req, res, next) {
     try {
-        let result = await matchModel.GetMatchById(req.params.matchid);
-        if (result.status != 200)
-            res.status(result.status).send(result.result);
-        else {
-            console.log(result);
-            res.status(200).send(result.result);
-        }
+
+        res.status(200).send({result:{match:req.match}});
     } catch (err) {
         console.log(err);
         res.status(500).send(err);
     }
 });
 //Update the game server
-router.patch('/update', async function (req, res, next) {
+router.patch('/update', auth.GameSerververifyAuth, async function (req, res, next) {
     try {
         //! verify if the server password is correct
         //get updated information from a unity server
         //call app to save it
-        let result = await matchModel.UpdateServer(req.body);
-        console.log(result);
+        let result = await matchModel.UpdateServer(req.match._id, req.body.updates);
         if (result.status != 200){
            res.status(result.status).send(result.msg);
         }else{
@@ -67,10 +72,10 @@ router.patch('/update', async function (req, res, next) {
     }
 });
 
-router.delete('/server', async function (req, res, next) {
+router.delete('/server',auth.GameSerververifyAuth, async function (req, res, next) {
     try {
         console.log("deleting");
-        let result = await matchModel.closeMatch(req.body.matchid);
+        let result = await matchModel.closeMatch(req.match._id);
         res.status(result.status).send(result.result);
     } catch (err) {
         console.log(err);

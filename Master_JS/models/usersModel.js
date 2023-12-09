@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const auth = require("../config/utils");
 const db = require("../config/database");
+const { ObjectId } = require('mongodb');
 const client = db.getdatabase();
 const saltRounds = 10; 
 
@@ -10,13 +11,21 @@ function isValidEmail(email) {
 }
 
 class User {
-    constructor(username, password,email , token) {
+    constructor(id,username, password,email , token) {
+        this.id = id
         this.username = username;
         this.email = email;
         this.password = password;
         this.token = token;
     }
-
+    static async Register(user) {
+        try {
+            //verify if the user is in any game currently
+        } catch (err) {
+            console.log(err);
+            return { status: 500, result: { msg: "Internal server error" }};
+        }  
+    }
     static async Register(user) {
         try {
             let db = client.collection("user")
@@ -47,6 +56,7 @@ class User {
             dbResult = await db.insertOne(insert_user);
             let user_id = dbResult.insertedId;
             return {status: 200, result: {
+                id: user_id,
                 msg:"User Registered"
             }}
         } catch (err) {
@@ -81,7 +91,7 @@ class User {
                 }}
             return {status: 200, result: {
                 user:{
-                    email: user.email,
+                    id: dbUser._id,
                     username: dbUser.username
                 },
                 msg:"Logged in successfully"
@@ -93,9 +103,10 @@ class User {
     }
     static async SaveToken(user){
         try{
-            console.log("saving token");
             let db = client.collection("user");
-            let query = {email : user.email};
+            let id = new ObjectId(user.id)
+            console.log(user);
+            let query = {_id : id};
             let new_value = {$set:{token : user.token}}
             let dbResult = await db.updateOne(query, new_value);
             console.log(user);
@@ -105,11 +116,12 @@ class User {
             return{status: 500, result: { msg: "Internal server error" }}
         }
     }
+//id,username, password,email , token
     static async getUserByToken(token){
         try{
             let db = client.collection("user");
             let dbResult = await db.find({ token: token}).toArray();
-            let user = dbResult[0];
+            let user = new User(dbResult[0]._id.toString(), dbResult[0].username, dbResult[0].password, dbResult[0].email, dbResult[0].token);
             if(!user)
                 return {status:404, results:{msg:"No User Found"}}
             return { status: 200, result: {user:user}};
@@ -118,7 +130,6 @@ class User {
             return{status: 500, result: { msg: "Internal server error" }}
         }
     }
-
 }
 
 module.exports = User;

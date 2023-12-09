@@ -7,7 +7,8 @@ services:
     ports:
       - "27001:7777/udp"
     environment:
-      - GAME_ID=${GAME_ID}
+      - TOKEN=${TOKEN}
+
 
   unity_server_2:
     build: 
@@ -16,7 +17,7 @@ services:
     ports:
       - "27002:7777/udp"
     environment:
-      - GAME_ID=${GAME_ID}
+      - TOKEN=${TOKEN}
  
 
   unity_server_3:
@@ -26,7 +27,7 @@ services:
     ports:
       - "27003:7777/udp"
     environment:
-      - GAME_ID=${GAME_ID}
+      - TOKEN=${TOKEN}
 
 
   unity_server_4:
@@ -36,7 +37,7 @@ services:
     ports:
       - "27004:7777/udp"
     environment:
-      - GAME_ID=${GAME_ID}
+      - TOKEN=${TOKEN}
 
 
   unity_server_5:
@@ -46,7 +47,7 @@ services:
     ports:
       - "27005:7777/udp"
     environment:
-      - GAME_ID=${GAME_ID}
+      - TOKEN=${TOKEN}
 
 
   unity_server_6:
@@ -56,7 +57,7 @@ services:
     ports:
       - "27006:7777/udp"
     environment:
-      - GAME_ID=${GAME_ID}
+      - TOKEN=${TOKEN}
 
   unity_server_7:
     build: 
@@ -65,7 +66,7 @@ services:
     ports:
       - "27007:7777/udp"
     environment:
-      - GAME_ID=${GAME_ID}
+      - TOKEN=${TOKEN}
 
   unity_server_8:
     build: 
@@ -74,7 +75,7 @@ services:
     ports:
       - "27008:7777/udp"
     environment:
-      - GAME_ID=${GAME_ID}
+      - TOKEN=${TOKEN}
 
   unity_server_9:
     build: 
@@ -83,7 +84,7 @@ services:
     ports:
       - "27009:7777/udp"
     environment:
-      - GAME_ID=${GAME_ID}
+      - TOKEN=${TOKEN}
 
   unity_server_10:
     build: 
@@ -92,4 +93,4 @@ services:
     ports:
       - "27010:7777/udp"
     environment:
-      - GAME_ID=${GAME_ID}
+      - TOKEN=${TOKEN}
