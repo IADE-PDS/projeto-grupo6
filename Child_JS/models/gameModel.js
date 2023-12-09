@@ -14,7 +14,7 @@ const fullcomposeFilePath = '/home/user/Slave_js/docker/docker-compose.yml';
 var services = [];
 //!!! NOT THE BEST WAY OF RUNNING COMMANDS, because is sending mensages throw the stderr but does it succsesfully
 class Game {
-    static async start_game(id) {
+    static async start_game(token) {
         try {
             getAllServices()
             let tempServices = services;
@@ -36,7 +36,7 @@ class Game {
             let service = tempServices[0];
             let port = service.config.ports[0];
             port = port.split(":")[0];
-            let composeCommand = 'GAME_ID='+id+' docker compose -f '+fullcomposeFilePath+' up -d '+service.name;
+            let composeCommand = 'TOKEN='+token+' docker compose -f '+fullcomposeFilePath+' up -d '+service.name;
             const { stderr, stdout } = await executeCommand(composeCommand); 
             if (stderr.includes("Started")) {
                 return {

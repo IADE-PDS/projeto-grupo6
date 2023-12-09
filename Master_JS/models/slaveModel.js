@@ -31,7 +31,7 @@ class Slave {
         }  
     }
     
-    static async CreateServer(Match_id) {
+    static async CreateServer(token) {
         try {
             //!Try another server if this one not 200!
             let collection = client.collection("slave");
@@ -57,9 +57,8 @@ class Slave {
         } catch (err) {
             console.log(err);
             return { status: 500, result: { msg: "Internal server error" }};
-        }  
+        }
     }
-
     static async CloseServer(ip){
         try{
             let collection = client.collection("slave");

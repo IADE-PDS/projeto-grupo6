@@ -1,9 +1,9 @@
-const bcrypt = require('bcrypt');
-const auth = require("../config/utils");
 const db = require("../config/database");
 const client = db.getdatabase();
 const Slave = require("./slaveModel");
 const { ObjectId } = require('mongodb');
+const utils = require("../config/utils");
+const tokenSize = 64;
 
 class Match{
     constructor( players, games, log, max_players, games_pool,//! INFORMAÇÔES DO JOGO ATUAL,INFORMAÇÔES,INFORMAÇÔES UNIVERSAIS DO PLAYER
@@ -28,25 +28,13 @@ class Match{
             status: status,//status, waiting(waiting players), started, finished
         };
     };
-    
-    static async GetMatchById(id) {
-        try {
-            //!This function will never be used directly by the player
-            let db = client.collection("match")
-            let matchID = new ObjectId(id);
-            let dbResult = await db.find({ "_id": matchID}).toArray();
-            if(!dbResult.length){
-                return {status: 400, result: {
-                    msg:"server not found"
-                }}
-            };
-            return {status: 200, result: dbResult[0]}
-            } catch (err) {
-                console.log(err);
-                return { status: 500, result: { msg: "Internal server error" }};
-            } 
+    static isWhitelistValid(whitelistObj){
+        if(Date.now()/1000 - whitelistObj.timestamp/1000 <= 30)
+            return true
+        return false
     }
 
+    
     static async GetAllMatches() {
         try {
             let matches = [];
@@ -85,10 +73,11 @@ class Match{
           }
         return result
     }
+
     static async CreateUnityServer(settings) {
         try {
             let db = client.collection("match")
-
+            let token = utils.genToken(tokenSize);
             //! Verify if every settings exist and are set correctly
             //if no name then cant create
             //if server created successfully
@@ -98,11 +87,13 @@ class Match{
             let insert_match = {};
             insert_match.players = [];
             insert_match.games = [];
+            insert_match.whitelist = [];
             insert_match.log = [];
+            insert_match.token = token;
             insert_match.settings = settings;
 
             let dbResult = await db.insertOne(insert_match);
-            let result = await Slave.CreateServer(dbResult.insertedId);
+            let result = await Slave.CreateServer(dbResult.token);
             if(result.status != 200){
                 await db.deleteOne({_id: dbResult.insertedId});
                 return {status: result.status, result: {msg:"something went wrong"}}
@@ -137,6 +128,7 @@ class Match{
             //the unity app recieves the status 200 and enters on the server with the ip and port
             return {status: 200, result: {
                 msg:"unity server created sucessfully",
+                id: id,
                 ip:result.result.ip, port: result.result.port
             }}
         } catch (err) {
@@ -147,6 +139,7 @@ class Match{
 
     static async JoinCommunityLobby(code) {
         try {
+            //add player to the whitelist with a timestamp but doesnt need verification
             //!verify if players is not in a lobby already
             db = client.collection("match")
             let dbResult = await db.find({ "unity_server.settings.pin": code}).toArray();
@@ -177,7 +170,75 @@ class Match{
                 return { status: 500, result: { msg: "Internal server error" }};
             } 
     }
+    static async AuthethicatePlayer(playerId, matchId) {
+        try {
+            console.log("authenthicating");
+            let _matchId = new ObjectId(matchId);
+            let _playerId = new ObjectId(playerId);
+            let query = {
+                "_id": _matchId,
+                "whitelist": {
+                    $elemMatch: {
+                      "_id": _playerId
+                    }
+                }
+            };
+            let dbresult = await client.collection("match").findOne(query);
+            if(dbresult){
+                let whitelistObj = dbresult.whitelist[dbresult.whitelist.findIndex(element => element._id.toString() == _playerId.toString())]
+                if(!this.isWhitelistValid(whitelistObj)){
+                    console.log("Player cant rejoin 30 seconds passed");
+                    await this.TogglePlayerWhitelist(0,playerId, matchId);
+                    dbresult = null;
+                }
+            }
+            if(!dbresult)
+                return { status: 401, msg:"User is not authenthicated"}
+            return { status: 200, msg:"User is authenthicated"}
+            } catch (err) {
+                console.log(err);
+                return { status: 500, result: { msg: "Internal server error" }};
+            } 
 
+    }
+    static async TogglePlayerWhitelist(code,playerId, MatchId, points) {
+        try {
+            //code, 0 to remove 1 to add
+            let db = client.collection("match");
+            let _matchId = new ObjectId(MatchId);
+            let _playerId = new ObjectId(playerId);
+            let query = {_id: _matchId};
+            let dbResult = await db.findOne(query);
+            if(!dbResult){
+                return {status: 400, result: {
+                    msg:"game server not found"
+                }}
+            };
+            let dbwhitelist = dbResult.whitelist;
+            let whitelist = toggleElement(dbwhitelist ,{"_id":_playerId,"timestamp": new Date().getTime(),"points":points});
+            function toggleElement(arr, desiredelement) {
+                console.log(arr);
+                const index = arr.findIndex(element => element._id.toString() == desiredelement._id.toString());
+                if (index !== -1) {
+                    if(code == 0)
+                        arr.splice(index, 1);
+                } else {
+                    if(code == 1)
+                        arr.push(desiredelement);
+                }
+              
+                return arr;
+              }
+           
+              
+            let new_value = {$set:{whitelist : whitelist}}
+            dbResult = await db.updateOne(query, new_value);
+            return { status: 200, msg:"Updated Successfully"}
+        } catch (err) {
+            console.log(err);
+            return { status: 500, result: err };
+        }  
+    }
     static async closeMatch(matchID) {
         try {
             //!only servers can close
@@ -189,6 +250,10 @@ class Match{
                     msg:"match not found"
                 }}
             };
+            await db.updateOne({_id: id},
+                {
+                    $set: {"settings.status":"finished"}
+                });
             let full_ip={ip:dbResult.settings.ip, port:dbResult.settings.port};
             let response = await Slave.CloseServer(full_ip);
             if(response.status != 200){
@@ -196,17 +261,13 @@ class Match{
             }
             if(!dbResult.settings.isOfficial || dbResult.settings.status != "finished"){//if server is not official or is official and the status isnt finished, we delete it
                 dbResult = await db.deleteOne({_id:id});//deletes from db
-            } else{
-                dbResult = await db.updateOne({_id: id},
-                    {
-                        $set: {"settings.status":"finished"}
-                    });
+            } 
+              
                 //! need to have authenthication
                 //for every player
                 //get all matches from the player
                 //if a player has more than 10 matches
                 //delete the oldest one
-            }
             return {status: 200, result:{msg: "stopped server successfully"}}
             } catch (err) {
                 console.log(err);
@@ -230,50 +291,73 @@ class Match{
         }
         return fixedUpdates
     }
-
-
-    //! NEEDS TO BE TESTED WHEN MINIGAMES ARE DONE
-    static async UpdateServer(reqBody) {
+    static async UpdateServer(matchId, updates) {
         try {
-            console.log(reqBody);
-            let id = new ObjectId(reqBody.matchId);
+            let id = new ObjectId(matchId);
             let db = client.collection("match")
             let dbResult = await db.findOne({"_id": id});
             if(!dbResult){
-                return {status: 400, result: {
+                return {status: 404, result: {
                     msg:"Server with given ID does not exist, or could not contact database."
                 }}
             };
-            let updates = reqBody.updates
-            let dbPlayers = dbResult.players;
-            let players = toggleElement(dbPlayers ,reqBody.updates.player);
-            dbResult = await db.updateOne({_id: id},
+            if(dbResult.settings.status == "finished"){
+                return {status: 400, result: {
+                    msg:"Cannot alter server after it's been finished."
+                }}
+            }
+
+                //update Players
+                if(updates.player){
+                    console.log("playerAdded/removed");
+                    let dbPlayers = dbResult.players;
+                    let ElementToCheck = {"_id": new ObjectId(updates.player.id), "points": updates.player.points};
+                    const index = dbPlayers.findIndex(element => element._id.toString() == ElementToCheck._id.toString());
+                    if (index !== -1) {
+                        await this.TogglePlayerWhitelist(1,dbPlayers[index]._id,matchId,dbPlayers[index].points);
+                        dbPlayers.splice(index, 1);
+                    } else {
+                        await this.TogglePlayerWhitelist(0,ElementToCheck._id,matchId);
+                        dbPlayers.push(ElementToCheck);
+                    }
+                    dbResult.players = dbPlayers;
+                    dbResult = await db.updateOne({_id: id},
                         {
-                            $set: {players : players}
+                            $set: {players : dbPlayers}
                         });
+                }                
 
-           
-
-            function toggleElement(arr, element) {
-                const index = arr.indexOf(element);
-                if (index !== -1) {
-                  arr.splice(index, 1);
-                } else {
-                  arr.push(element);
-                }
-              
-                return arr;
-              }
-              return {status: 200, result: {
+            return {status: 200, result: {
                 msg:"Server updated successfully",
             }}
 
-
+           
         } catch (err) {
             console.log(err);
             return { status: 500, result: { msg: "Internal server error" }};
         } 
     }
+ 
+    static async GetMatchByToken (token) {
+        try {
+            let query = {
+                token: token}
+            let result = await client.collection("match").findOne(query);
+            if(!result.settings.port && !result.settings.ip){
+
+            }
+            //IF result.setting.ip || result.settings.port
+            //crashHandlerModel.GameServerCreationError.
+            if(!result)
+                return {status:404, results:{msg:"No Match Found"}}
+            return { status: 200, result:{match: result}}
+            } catch (err) {
+                console.log(err);
+                return { status: 500, result: { msg: "Internal server error" }};
+            } 
+
+    }
     
 }
+
 module.exports = Match;

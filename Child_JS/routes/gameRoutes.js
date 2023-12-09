@@ -4,7 +4,7 @@ const Game = require("../models/gameModel");
 
 router.post('/start', async function (req, res, next) {
     try {
-        let result = await Game.start_game(req.body.id);
+        let result = await Game.start_game(req.body.token);
         res.status(result.status).send(result.result);
     } catch (err) {
         console.log(err);
