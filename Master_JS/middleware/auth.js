@@ -16,6 +16,7 @@ module.exports.verifyAuth = async function (req, res, next) {
             return;
         }
         req.user = result.result.user;
+        console.log(req.user);
         next();
     } catch (err) {
         console.log(err);

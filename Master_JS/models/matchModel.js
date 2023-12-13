@@ -88,12 +88,12 @@ class Match{
             insert_match.players = [];
             insert_match.games = [];
             insert_match.whitelist = [];
-            insert_match.log = [];
+            insert_match.logs = [];
             insert_match.token = token;
             insert_match.settings = settings;
 
             let dbResult = await db.insertOne(insert_match);
-            let result = await Slave.CreateServer(dbResult.token);
+            let result = await Slave.CreateServer(token);
             if(result.status != 200){
                 await db.deleteOne({_id: dbResult.insertedId});
                 return {status: result.status, result: {msg:"something went wrong"}}
@@ -184,17 +184,20 @@ class Match{
                 }
             };
             let dbresult = await client.collection("match").findOne(query);
+            let whitelistObj;
             if(dbresult){
-                let whitelistObj = dbresult.whitelist[dbresult.whitelist.findIndex(element => element._id.toString() == _playerId.toString())]
+                whitelistObj = dbresult.whitelist[dbresult.whitelist.findIndex(element => element._id.toString() == _playerId.toString())]
                 if(!this.isWhitelistValid(whitelistObj)){
-                    console.log("Player cant rejoin 30 seconds passed");
                     await this.TogglePlayerWhitelist(0,playerId, matchId);
                     dbresult = null;
                 }
             }
             if(!dbresult)
                 return { status: 401, msg:"User is not authenthicated"}
-            return { status: 200, msg:"User is authenthicated"}
+            dbresult = await client.collection("user").findOne({_id: _playerId});
+            if(!dbresult)
+                return { status: 404, msg:"User not found"}
+            return { status: 200, msg:"User is authenthicated", result:{user:{id: playerId, name:dbresult.username, points: whitelistObj.points}}}
             } catch (err) {
                 console.log(err);
                 return { status: 500, result: { msg: "Internal server error" }};
@@ -241,7 +244,6 @@ class Match{
     }
     static async closeMatch(matchID) {
         try {
-            //!only servers can close
             let id = new ObjectId(matchID);
             let db = client.collection("match");
             let dbResult = await db.findOne({ _id: id});
@@ -250,20 +252,14 @@ class Match{
                     msg:"match not found"
                 }}
             };
-            await db.updateOne({_id: id},
-                {
-                    $set: {"settings.status":"finished"}
-                });
             let full_ip={ip:dbResult.settings.ip, port:dbResult.settings.port};
             let response = await Slave.CloseServer(full_ip);
             if(response.status != 200){
                 return { status: 500, result: { msg: "Internal server error" }};
-            }
-            if(!dbResult.settings.isOfficial || dbResult.settings.status != "finished"){//if server is not official or is official and the status isnt finished, we delete it
+            } 
+            if(dbResult.settings.status != "finished"){//if server is not official or is official and the status isnt finished, we delete it
                 dbResult = await db.deleteOne({_id:id});//deletes from db
             } 
-              
-                //! need to have authenthication
                 //for every player
                 //get all matches from the player
                 //if a player has more than 10 matches
@@ -275,22 +271,6 @@ class Match{
             } 
     }
 
-    static parseUpdates(updateTable) {
-        let fixedUpdates = []
-        if (updateTable.player) {
-            fixedUpdates.players = updateTable.players
-        }
-        if (updateTable.games.length) {
-            fixedUpdates.games = updateTable.games
-        }
-        if (updateTable.log.length) {
-            fixedUpdates.log = updateTable.log
-        }
-        if (updateTable.settings.length) {
-            fixedUpdates.settings = updateTable.settings
-        }
-        return fixedUpdates
-    }
     static async UpdateServer(matchId, updates) {
         try {
             let id = new ObjectId(matchId);
@@ -306,27 +286,58 @@ class Match{
                     msg:"Cannot alter server after it's been finished."
                 }}
             }
+            //only do a db Write once instead of mupliple times
+            for (const update of updates) {
+                switch (Object.keys(update)[0]) {
+                    case 'logs':
+                        // add logs
+                        let newlogs = update.logs;
+                        let dbLogs = dbResult.logs;
+                        let InsertLogs = dbLogs.concat(newlogs);
+                        let tempdbResult = await db.updateOne({_id: id},
+                            {
+                                $set: {logs : InsertLogs}
+                            });
+                        break;
+                    case 'game':
+                        //add game
+                        //updates.game.game
+                        //updates.game.scores
+                        break;
+                    case 'settings':
+                        // overwrite settings
+                        break;
+                    case 'status':
+                        // modify status status
+                        break;
+                    case 'player':
+                        let player = update.player;
+                        // only for player join
+                        //only for player join, one at a time
+                        let dbPlayers = dbResult.players;
+                        console.log(dbResult);
+                        let ElementToCheck = {"_id": new ObjectId(player.id), "points": player.points};
+                        const index = dbPlayers.findIndex(element => element._id.toString() == ElementToCheck._id.toString());
+                        if (index !== -1) {
+                            await this.TogglePlayerWhitelist(1,dbPlayers[index]._id,matchId,dbPlayers[index].points);
+                            dbPlayers.splice(index, 1);
+                        } else {
+                            await this.TogglePlayerWhitelist(0,ElementToCheck._id,matchId);
+                            dbPlayers.push(ElementToCheck);
+                        }
+                        dbResult.players = dbPlayers;
+                        dbResult = await db.updateOne({_id: id},
+                            {
+                                $set: {players : dbPlayers}
+                            });
+                        break;
+                    default:
+                        return {status: 400, 
+                            msg:"Bad information"}
+            
 
-                //update Players
-                if(updates.player){
-                    console.log("playerAdded/removed");
-                    let dbPlayers = dbResult.players;
-                    let ElementToCheck = {"_id": new ObjectId(updates.player.id), "points": updates.player.points};
-                    const index = dbPlayers.findIndex(element => element._id.toString() == ElementToCheck._id.toString());
-                    if (index !== -1) {
-                        await this.TogglePlayerWhitelist(1,dbPlayers[index]._id,matchId,dbPlayers[index].points);
-                        dbPlayers.splice(index, 1);
-                    } else {
-                        await this.TogglePlayerWhitelist(0,ElementToCheck._id,matchId);
-                        dbPlayers.push(ElementToCheck);
-                    }
-                    dbResult.players = dbPlayers;
-                    dbResult = await db.updateOne({_id: id},
-                        {
-                            $set: {players : dbPlayers}
-                        });
-                }                
-
+                }
+            }
             return {status: 200, result: {
                 msg:"Server updated successfully",
             }}
@@ -343,6 +354,8 @@ class Match{
             let query = {
                 token: token}
             let result = await client.collection("match").findOne(query);
+            if(!result)
+                return {status:404, results:{msg:"No match Found"}}
             if(!result.settings.port && !result.settings.ip){
 
             }

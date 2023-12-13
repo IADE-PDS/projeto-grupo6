@@ -36,7 +36,6 @@ class Marchmaking {
     //to verify is the player can still join after 15 seconds
     static async SearchServer(PlayerId) {
         try {
-
             var server;
             let _id = new ObjectId(PlayerId);
             let collection = client.collection("match")
@@ -69,7 +68,7 @@ class Marchmaking {
                     for (let result of results){
                         for(let whitelistObj of result.whitelist){
                             if(!match.isWhitelistValid(whitelistObj)){
-                                await match.TogglePlayerWhitelist(0,PlayerId, dbresult._id.toString());
+                                await match.TogglePlayerWhitelist(0,PlayerId, result._id.toString());
                                 result.whitelist.splice(result.whitelist.findIndex(element => element._id.toString() == whitelistObj._id.toString()));
                             }
                         }

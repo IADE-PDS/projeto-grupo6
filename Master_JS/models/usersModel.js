@@ -11,8 +11,7 @@ function isValidEmail(email) {
 }
 
 class User {
-    constructor(id,username, password,email , token) {
-        this.id = id
+    constructor(username, password,email , token) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -52,7 +51,6 @@ class User {
             insert_user.email = user.email;
             insert_user.inventory = [];
             insert_user.stats = [];//! logica de minigame nas stats 
-
             dbResult = await db.insertOne(insert_user);
             let user_id = dbResult.insertedId;
             return {status: 200, result: {
@@ -105,11 +103,9 @@ class User {
         try{
             let db = client.collection("user");
             let id = new ObjectId(user.id)
-            console.log(user);
             let query = {_id : id};
             let new_value = {$set:{token : user.token}}
             let dbResult = await db.updateOne(query, new_value);
-            console.log(user);
             return { status: 200, result: {msg:"Token saved!"}};
         }catch(err){
             console.log(err);
@@ -120,11 +116,26 @@ class User {
     static async getUserByToken(token){
         try{
             let db = client.collection("user");
-            let dbResult = await db.find({ token: token}).toArray();
-            let user = new User(dbResult[0]._id.toString(), dbResult[0].username, dbResult[0].password, dbResult[0].email, dbResult[0].token);
-            if(!user)
+            let dbResult = await db.findOne({ token: token});
+            if(!dbResult)
                 return {status:404, results:{msg:"No User Found"}}
+            let user = new User( dbResult.username, dbResult.password, dbResult.email, dbResult.token);
+            user.id = dbResult._id.toString();
             return { status: 200, result: {user:user}};
+        }catch(err){
+            console.log(err);
+            return{status: 500, result: { msg: "Internal server error" }}
+        }
+    }
+    static async logout(id){
+        try{
+            let db = client.collection("user");
+            let _id = new ObjectId(id);
+            let query = {_id : _id};
+            let new_value = {$set:{token : ""}}
+            let dbResult = await db.updateOne(query, new_value);
+            //dont need to verify because it will need to pass throw the middleware first
+            return { status: 200, result: {msg:"Logged out sucessfully"}};
         }catch(err){
             console.log(err);
             return{status: 500, result: { msg: "Internal server error" }}

@@ -57,7 +57,8 @@ router.post('/auth',auth.verifyAuth, async function (req, res, next) {
 });
 router.delete('/auth',auth.verifyAuth, async function (req, res, next) {
     try {
-        //remove the token from database
+        let result = User.logout(req.user.id);
+        console.log(result);
         res.status(200).send({msg: "Logged out"});
     } catch (err) {
         console.log(err);

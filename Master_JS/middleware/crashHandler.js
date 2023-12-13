@@ -12,3 +12,7 @@ module.exports.unityServerBadData = async function () {
         res.status(500).send(err);
     }
 } 
+//Game Server crashed
+//create a table on the db With the server id and the user
+//when 60% of users ask start another slave server 
+//connect players to that second server

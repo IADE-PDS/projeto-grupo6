@@ -37,14 +37,14 @@ class Slave {
             let collection = client.collection("slave");
             let slave = await collection.aggregate([
                 {$sort: { n_unityServers: 1 }}]).toArray();
+            if(!slave.length)
+                return {status: 404, result: {msg:"No Servers Found"}}
             while(slave.length){
-                
-                if(!slave.length)
-                    return {status: 404, result: {msg:"No Servers Found"}}
                 slave = slave[0];
                 let postData = {
-                    id:Match_id
+                    token:token
                 }
+                console.log(postData);
                 let url = "http://"+slave.ip+":"+process.env.SLAVEPORT+"/api/game/start"
                 let response = await axios.post(url, postData);
 
