@@ -220,6 +220,48 @@ O jogador ao entrar pela primeira vez no MiniGamerino, terá que  registar-se co
 ### 3º Cenário: Criar um lobby
 O criador do lobby terá que preencher as informações do mesmo como nome, limitar o número de jogadores, privar ou não o lobby, se o privar será lhe disponibilizado um código para dar aos outros jogadores. Após o preenchimento poderá criar o lobby.
 
+## Propostas de Mini-jogos 
+### Labirinto
+Jogo Co-op (4 jogadores). Em ambas as equipas, haverá um jogador que não consegue visualizar o labirinto (piloto) e outro que consegue (copiloto). O que não vê o labirinto controla a personagem para escapar do labirinto, enquanto o outro deverá dar instruções ao piloto, para isso deverá pressionar as setas do teclado que aparecerão na tela do piloto.
+![]()
+    
+### Adivinha o traço
+Para 2,3 e 4 jogadores. O jogo funciona por rondas. A cada ronda é selecionado um jogador para desenhar uma palavra que foi escolhida randomicamente. O objetivo dos outros jogadores é adivinhar essa palavra.
+
+<img src="https://media.discordapp.net/attachments/1134884450891731086/1155986099001376889/ed96d9c2-9447-42ec-875c-5a2fe154bb92.jpg?width=701&height=701" width="400" height="400" />
+
+### Corda
+Jogo para 2/4 jogadores. Consiste em puxar a corda até a equipa adversária alcançar o meio da tela. Ambas as equipas devem pressionar uma certa combinação de teclas que aparecerá na tela, assim puxando a corda para o seu lado. 
+
+<img src="https://media.discordapp.net/attachments/1134884450891731086/1155985897540567131/5506b0fd-4c77-4768-89f0-bd3d13d8c94c.jpg?width=701&height=701" width="400" height="400" />
+
+### Tiro ao Alvo
+Como o título diz, o objetivo do jogo é atirar nos alvos, quem acertar mais ganha o mini jogo.
+
+<img src="https://media.discordapp.net/attachments/1134884450891731086/1155986085197910036/917e8f19-003c-4e33-b118-616523546522.jpg?width=701&height=701" width="400" height="400" />
+
+### Corrida/Estafeta
+Para 2,3 e 4 jogadores. Com a camera em constante movimento, os jogadores precisam ultrapassar os obstáculos o mais rapidamente possível. Caso especial para 4 jogadores, haverá equipas, em que um jogador começa e a meio da corrida passará a “estafeta” para o aliado.
+
+<img src="https://media.discordapp.net/attachments/1134884450891731086/1155985897834152058/c704a96b-0d13-4abe-8d8b-daa071e995eb.jpg?width=701&height=701" width="400" height="400" />
+
+### Luta dos Palitos
+Jogo Co-op ou Free For All. Uma arena em que os jogadores precisam de se matar entre si, o último a sobreviver é o vencedor. 
+
+<img src="https://media.discordapp.net/attachments/1134884450891731086/1155986056085254204/9ab85627-62b5-40d3-9199-416fd2377eb4.jpg?width=701&height=701" width="400" height="400" />
+
+### Tecla Aleatória
+Jogo Free for All. Player recebe tecla para carregar. Quem carregar na tecla primeiro ganha.
+
+<img src="https://media.discordapp.net/attachments/1134884450891731086/1155985897288896572/a4f133ea-9649-4f96-b9a7-4fb3906d50f2.jpg?width=701&height=701" width="400" height="400" />
+
+### Quiz
+Jogo Free for All (todos contra todos). Cada jogador recebe uma pergunta e tem que escolher a opção certa, se o jogador acertar ganha x pontos. Ganha quem acabar com mais pontos.
+
+<img src="https://cdn.discordapp.com/attachments/1103328472241283235/1195070002064269473/image.png?" width="400" height="400" />
+
+
+
 ## Tecnologias Utilizadas:
 
 * Unity
