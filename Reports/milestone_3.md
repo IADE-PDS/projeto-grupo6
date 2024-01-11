@@ -416,16 +416,16 @@ Para construir a nossa rede de diversas máquinas vamos usar o VirtualBox, onde 
 ## Distribuição de Tarefas
 
 Duarte:
-Menus unity, rig stickman e servidor
+Unity game, Menus unity, Rig stickman, Servidor, Documentação, Unity UI, Unity Minigames, Debugging
 
 Mariana:
-Menus unity, replicação da BD, NGINX, documentação, servidor
+Unity game, Menus unity, Replicação da BD, NGINX, Servidor, Documentação, Unity UI, Unity Minigames
 
 Marco:
-Unity game, conexão jogo/servidores, documentação, servidor
+Unity game, Mock-Ups, Conexão jogo/servidores, Servidor, Documentação, Unity UI, Unity Minigames, Debugging
 
 Francisco:
-Servidor,  conexão jogo/servidores, BD, dockers
+Unity game, Menus unity, Dockers, Conexão jogo/servidores, BD, Servidor, Documentação, Unity UI, Unity Minigames, Debugging
 
 ## Plano de Produção
 
