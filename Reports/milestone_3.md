@@ -224,18 +224,18 @@ O criador do lobby terá que preencher as informações do mesmo como nome, limi
 ### Corrida/Estafeta
 Para 2,3 e 4 jogadores. Com a câmera a seguir o jogador, os jogadores precisam ultrapassar os obstáculos o mais rapidamente possível. Quem chegar à meta primeiro recebe a maior quantidade de pontos; os jogadores em segundo e terceiro lugar recebem menos, e o em último não recebe nada.
 
-<img src="https://cdn.discordapp.com/attachments/1103328472241283235/1195076513016586421/image.png?" width="1000" height="400" />
+<img src="https://cdn.discordapp.com/attachments/1103328472241283235/1195076513016586421/image.png?" width="1000" height="500" />
 
 ### Luta dos Palitos
 Jogo Free For All. Uma arena em que os jogadores precisam de se matar entre si. Quando um jogador matar outro ele recebe pontos; o último a sobreviver é o vencedor ganhando mais pontos. 
 
-<img src="https://cdn.discordapp.com/attachments/1103328472241283235/1195071760756908133/image.png?" width="1000" height="400" />
+<img src="https://cdn.discordapp.com/attachments/1103328472241283235/1195071760756908133/image.png?" width="1000" height="500" />
 
 
 ### Quiz
 Jogo Free for All (todos contra todos). Os jogadores recebem quatro perguntas e tem que escolher as opções certas. No final do jogo quem tiver maior número de perguntas corretas ganha.
 
-<img src="https://cdn.discordapp.com/attachments/1103328472241283235/1195070002064269473/image.png?" width="1000" height="400" />
+<img src="https://cdn.discordapp.com/attachments/1103328472241283235/1195070002064269473/image.png?" width="1000" height="500" />
 
 
 
