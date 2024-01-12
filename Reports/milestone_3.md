@@ -456,35 +456,37 @@ Escritura da Documentação :active,    des5, 2023-10-10 ,2024-01-07
 ### Implementadas
 * Autenticação
 
-        No MiniGamerino, é necessário criar uma conta, esta precisa de email, nome, palavra-passe. Com uma conta criada, poderá realizar o login. 
-        Caso introduza os dados errados, não conseguirá entrar na aplicação.
+      No MiniGamerino, é necessário criar uma conta, esta precisa de email, nome, palavra-passe.
+      Com uma conta criada, poderá realizar o login. 
+      Caso introduza os dados errados, não conseguirá entrar na aplicação.
 
 * Criptografia
 
-        Hash da palavra-passe. A base de dados apenas tem acesso ao token que é atribuído ao utilizador após iniciar a sessão na aplicação.
+      Hash da palavra-passe. A base de dados apenas tem acesso ao token que é atribuído ao utilizador após iniciar a
+      sessão na aplicação.
 
 * Whitelist
 
-        Cada partida tem uma whitelist, evitando que jogadores indesejados entrem na partida.
-        Num lobby com quatro pessoas, uma sai do jogo devido a problemas de conectividade, apenas esse jogador poderá entrar naquela partida. 
+      Cada partida tem uma whitelist, evitando que jogadores indesejados entrem na partida. Num lobby com quatro jogadores, uma sai
+      do jogo devido a problemas de conectividade, apenas esse jogador poderá entrar naquela partida. 
 
 * Verificação de movimento do jogo no servidor
 
-        Antes de um jogador se mover, esta ação passa pelo servidor e tem de ser aprovada pelo mesmo.
+      Antes de um jogador se mover, esta ação passa pelo servidor e tem de ser aprovada pelo mesmo.
 
 ### Planeadas
 * Certificado SSL
 
-        Utilizando o NGINX, pretendia-se tornar as ligações entre servidores e jogo seguras.
+      Utilizando o NGINX, pretendia-se tornar as ligações entre servidores e jogo seguras.
 
 * Proteção contra exploits in-game
 
-        
-        Uma das vulnerabilidades presentes é o facto da vida do jogador ser pública, para prevenir esta falha, adicionamos um getter e setter.
+      Uma das vulnerabilidades presentes é o facto da vida do jogador ser pública, para prevenir esta falha, adicionamos
+      um getter e setter.
 
 * Express Mongoose Sanitize
 
-        Bloqueia caracteres especiais para prevenir ataques à base de dados.
+      Bloqueia caracteres especiais para prevenir ataques à base de dados.
 
 ## Manual de Utilizador
 Instruções passo a passo da ferramenta, de modo a capacitar todos os potenciais utilizadores da correta utilização da ferramenta de suporte ao apuramento de benefícios.
