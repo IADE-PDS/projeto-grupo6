@@ -27,6 +27,7 @@ module.exports.verifyAuth = async function (req, res, next) {
 module.exports.GameSerververifyAuth = async function (req, res, next) {
     try {
         console.log("authenthicating SERVER");
+        console.log(req.body);
         let token = req.body.token;
         if (!token) {
             res.status(401).send({ msg: "This Server is Not Valid." });

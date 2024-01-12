@@ -305,17 +305,21 @@ class Match{
                         //updates.game.scores
                         break;
                     case 'settings':
+                        console.log("settings");
                         // overwrite settings
                         break;
                     case 'status':
-                        // modify status status
+                        console.log(update.status.status);
+                        let updatestatus = await db.updateOne({_id: id},
+                            {
+                                $set: {"settings.status": update.status.status}
+                            });
                         break;
                     case 'player':
                         let player = update.player;
                         // only for player join
                         //only for player join, one at a time
                         let dbPlayers = dbResult.players;
-                        console.log(dbResult);
                         let ElementToCheck = {"_id": new ObjectId(player.id), "points": player.points};
                         const index = dbPlayers.findIndex(element => element._id.toString() == ElementToCheck._id.toString());
                         if (index !== -1) {

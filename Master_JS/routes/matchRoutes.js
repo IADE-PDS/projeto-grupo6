@@ -37,7 +37,6 @@ router.get('/matchmaking',auth.verifyAuth, async function (req, res, next) {
 //SERVER
 router.post('/authenthicateUser',auth.GameSerververifyAuth, async function (req, res, next) {
     try {
-        console.log(req.body.id)
         let result = await matchModel.AuthethicatePlayer(req.body.id, req.match._id);
         if(result.status != 200){
             res.status(result.status).send(result.msg);
