@@ -211,15 +211,14 @@ Convidaram-me para experimentar e desde aí tenho jogado bastante.”
 ```
 ## Guiões    
 
-### 1º Cenário: Criar um lobby
-O criador do lobby terá que preencher as informações do mesmo como nome, limitar o número de jogadores, privar ou não o lobby, se o privar será lhe disponibilizado um código para dar aos outros jogadores. Após o preenchimento poderá criar o lobby.
+### 1º Cenário: Votar no próximo mini jogo
+Durante uma partida, quando um mini jogo terminar, os jogadores terão que selecionar o próximo mini jogo. Aparecerá uma tela de votação e o jogador seleciona o mini jogo que pretende.
 
 ### 2º Cenário: Entrar num lobby
 O jogador quando abre a aplicação MiniGamerino, depara-se com um menu principal com um botão a dizer “Play”, após carregar nesse botão terá que escolher “Join Game”, aí encontrará uma lista de lobbies disponíveis, e simplesmente seleciona um que queira entrar e estará pronto para começar a jogar. O jogador, se quiser entrar num lobby privado, em baixo à esquerda, terá uma opção para meter o código do lobby que será oferecido pelo outro jogador.
 
-### 3º Cenário: Escolher um minijo
-O jogador ao entrar pela primeira vez no MiniGamerino, terá que  registar-se com o email, nickname , palavra-passe, após preencher será-lhe enviado um mail de confirmação para confirmar a conta.
-
+### 3º Cenário: Ver o histórico do jogador
+Na página inicial do MiniGamerino o utilizador, carrega no ícone da esquerda o de *user*, aí será direcionado para a página com as informações do utilizador, como as suas estatísticas e o histórico de partidas.
 
 
 ## Mini-jogos Realizados 
@@ -389,7 +388,6 @@ Para construir a nossa rede de diversas máquinas vamos usar o VirtualBox, onde 
 |Error (500): “Internal server error”, “Error Creating container” (507): “Unable to find container”|
 
 ## Requisitos Funcionais e Não Funcionais
-### Requisitos Funcionais
 **RF** - Requisito Funcional
 
 **RNF** - Requisito Não Funcional
@@ -453,3 +451,118 @@ Terceira Entrega :milestone,    des1, 2024-01-07 ,2024-01-07
 section Documentação
 Escritura da Documentação :active,    des5, 2023-10-10 ,2024-01-07
 ```
+
+## Componentes de Segurança
+### Implementadas
+* Autenticação
+
+        No MiniGamerino, é necessário criar uma conta, esta precisa de email, nome, palavra-passe. Com uma conta criada, poderá realizar o login. 
+        Caso introduza os dados errados, não conseguirá entrar na aplicação.
+
+* Criptografia
+
+        Hash da palavra-passe. A base de dados apenas tem acesso ao token que é atribuído ao utilizador após iniciar a sessão na aplicação.
+
+* Whitelist
+
+        Cada partida tem uma whitelist, evitando que jogadores indesejados entrem na partida.
+        Num lobby com quatro pessoas, uma sai do jogo devido a problemas de conectividade, apenas esse jogador poderá entrar naquela partida. 
+
+* Verificação de movimento do jogo no servidor
+
+        Antes de um jogador se mover, esta ação passa pelo servidor e tem de ser aprovada pelo mesmo.
+
+### Planeadas
+* Certificado SSL
+
+        Utilizando o NGINX, pretendia-se tornar as ligações entre servidores e jogo seguras.
+
+* Proteção contra exploits in-game
+
+        
+        Uma das vulnerabilidades presentes é o facto da vida do jogador ser pública, para prevenir esta falha, adicionamos um getter e setter.
+
+* Express Mongoose Sanitize
+
+        Bloqueia caracteres especiais para prevenir ataques à base de dados.
+
+## Manual de Utilizador
+Instruções passo a passo da ferramenta, de modo a capacitar todos os potenciais utilizadores da correta utilização da ferramenta de suporte ao apuramento de benefícios.
+
+### Página Registo (1/2)
+Quando inicia a aplicação MiniGamerino, o utilizador precisa de criar uma conta. Deve inserir o seu nome e carregar no "*Continue*".
+<img src="https://media.discordapp.net/attachments/556966863091793940/1195134684225617940/image.png?ex=65b2e2e9&is=65a06de9&hm=22bc37fd33f2023f33ebd95a622634fd890a3118b6b2649d4756e84223f499fb&=&format=webp&quality=lossless"/>
+
+### Página Registo (2/2)
+E aqui insere a palavra-passe e confirma a mesma.
+
+<img src="https://media.discordapp.net/attachments/556966863091793940/1195134684854747177/image.png?ex=65b2e2e9&is=65a06de9&hm=9cd3d5090b7c52d2abe132b6754f6ae895e14a79d4a5ec662a0eeccd8a26047b&=&format=webp&quality=lossless"/>
+
+### Página Login
+Com a conta criada, o utilizador é capaz de realizar o login.
+
+<img src="https://media.discordapp.net/attachments/556966863091793940/1195134348568043721/image.png?ex=65b2e299&is=65a06d99&hm=22c8534fd2cfe19c6b8bebf0660792ddbd50289626e2bed06de10a4882e8d666&=&format=webp&quality=lossless"/>
+
+### Página Inicial
+Após o processo de login, o utilizador tem o botão de "*Start*" e dois ícones o da direita serve para aceder as informações do utilizador e a da esquerda serve para alterar as definições.
+
+<img src="https://media.discordapp.net/attachments/556966863091793940/1195134892414087288/image.png?ex=65b2e31a&is=65a06e1a&hm=5933315d5030b25e2c83ef6637511e49f3c979f8f1aa6a517f2a37beb6a9ca1e&=&format=webp&quality=lossless"/>
+
+### Página Informação do Jogador
+Com duas abas disponíveis: "*Stats*" e "*History*": 
+
+Nas "*Stats*" é possível verificar as estatísticas do jogador. Ex: Número de vezes que ganhou um mini jogo.
+
+No "*History*" demonstra o histórico de partidas do jogador.
+
+<img src="https://cdn.discordapp.com/attachments/556966863091793940/1195134848801705994/image.png?ex=65b2e310&is=65a06e10&hm=7a0543bcf7c945ba43a76bd9d7a477b9f1afdc26fc86ab2751016efbcd82d350&"/>
+
+### Página Menu
+Ao clicar no botão de "*Start*" da **Página Inicial** é direcionado para o menu onde pode selecionar o que pretende jogar.
+
+* Oficial **⇒** Seleciona uma partida através do nosso sistema de matchmaking.
+* Custom **⇒** É direcionado para a Página de Servidores Custom.
+* Local **⇒** Cria servidor local.
+* Ícone Arduino **⇒** É direcionado para a Página Scanner QR.
+
+<img src="https://media.discordapp.net/attachments/556966863091793940/1195134998165082132/image.png?ex=65b2e334&is=65a06e34&hm=e70d23a35c3828022e3078e1b7e92d4ee45a6ae9edf5dd86e779c0c920244b0d&=&format=webp&quality=lossless"/>
+
+### Página Scanner QR
+Aqui o utilizador vai conseguir fazer *scan* do código QR para entrar na partida que está a correr no Raspberry Pi.
+
+<img src="https://cdn.discordapp.com/attachments/556966863091793940/1195135795858780210/Screenshot_2023-12-09-22-20-30-890_com.MiniGamerino.MiniGamerino.jpg?ex=65b2e3f2&is=65a06ef2&hm=14e6bc4c88455a166e60121b6fa31db4d6f0dac380fc43ac6a7f4596d001d285&" width="800" height="400" />
+
+### Página de Servidores Custom
+O utilizador consegue visualizar todas as partidas custom que estão a decorrer.
+
+<img src="https://cdn.discordapp.com/attachments/556966863091793940/1195136488283844728/image.png?ex=65b2e497&is=65a06f97&hm=d16433913780369e87dc669553213b9b0b73854846d80347b4fe07ebfccc043d&"/>
+
+
+### In-Game
+### Luta dos Palitos
+Existem três componentes iterativas para o jogador: 
+* Joystick de movimento **⇒** Este situa-se no canto inferior esquerdo. Está escondido até o jogador o pressionar.
+* Joystick de ataque **⇒** Este situa-se no canto inferior direito.
+* Botão de salto **⇒** Este situa-se no canto inferior direito acima do joystick de ataque.
+
+<img src="https://media.discordapp.net/attachments/556966863091793940/1195138781959954482/image.png?ex=65b2e6ba&is=65a071ba&hm=cddb5a657cfcc9648d16aebdf0710f376c230c33e9153dbe631735cf0be43829&=&format=webp&quality=lossless" width="800" height="400"/>
+
+### Corrida
+A corrida tem os mesmos componentes que a Luta dos Palitos menos o Joystick de ataque. 
+
+<img src="https://media.discordapp.net/attachments/556966863091793940/1195138782337454120/image.png?ex=65b2e6ba&is=65a071ba&hm=404f1b7d2e13c3c252ac61279227bf3e1d8f6ff4d24160697b28c63d6665a55c&=&format=webp&quality=lossless" width="800" height="400" />
+
+### Quiz
+O jogador tem de selecionar a resposta certa a pergunta. Para isso apenas precisa de escolher e carregar no botão com a opção correta.
+
+<img src="https://media.discordapp.net/attachments/556966863091793940/1195138782597492776/image.png?ex=65b2e6ba&is=65a071ba&hm=397f7b65fc661fd594964b8b6bbddac937379545700720f5ff69bad862f61b29&=&format=webp&quality=lossless" width="800" height="400"/>
+
+### Página Votação 
+Durante uma partida, quando um mini jogo termina, os jogadores necessitam de votar no próximo mini jogo.
+
+<img src="https://media.discordapp.net/attachments/556966863091793940/1195150980170403920/image.png?ex=65b2f216&is=65a07d16&hm=0b4e2feb451e2e1e1a96f2a31891cd948bc16f470d4faa8fa4b0c4847dcdeeaf&=&format=webp&quality=lossless"/>
+
+### Página Pausa
+Caso o jogador necessite de sair ou verificar os jogadores da partida, ao clicar no botao de pausa em cima e pausar o jogo.
+
+<img src="https://cdn.discordapp.com/attachments/556966863091793940/1195139473802010644/image.png?ex=65b2e75f&is=65a0725f&hm=73c344133fd1ff788fbc129561358771ac62e56a9fac259a6b0bdcb37e9037d4&"/>
