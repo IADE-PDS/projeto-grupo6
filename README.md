@@ -4,6 +4,9 @@
 # MiniGamerino
 ### 17/09/2023
 
+Jogo feito em Unity, os jogadores competem em uma série de minijogos. Servidores dinâmicos, utilizando Docker e JavaScript, são gerenciados para iniciar/fechar conforme a demanda dos jogadores, com foco em sistemas distribuídos.
+
+
 1. #### Duarte Cavaleiro nº20211026
 2. #### Francisco Santos nº20211206
 3. #### Marco Camargo nº20211019
